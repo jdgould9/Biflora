@@ -1,0 +1,5 @@
+.env
+/target/
+/spring-garden/target/
+/spring-garden/mvnw
+/spring-garden/mvnw.cmd
