@@ -1,0 +1,16 @@
+### Add a garden
+POST http://localhost:8080/api/gardens
+Content-Type: application/json
+
+{
+    "gardenName":"My Garden!"
+}
+
+### Add a zone
+POST http://localhost:8080/api/gardens/1/zones
+Content-Type: application/json
+
+{
+    "gardenZoneName":"Zone 2"
+}
+
