@@ -1,4 +1,8 @@
 package net.jdgould.spring_garden.dto.plant;
 
-public record PlantGetResponseDTO() {
+import net.jdgould.spring_garden.dto.tracker.PlantTrackerDTO;
+
+public record PlantGetResponseDTO(Long plantId,
+                                  String plantName,
+                                  PlantTrackerDTO plantTracker) {
 }

@@ -1,4 +1,4 @@
 package net.jdgould.spring_garden.dto.plant;
 
-public record PlantCreationRequestDTO() {
+public record PlantCreationRequestDTO(String plantName) {
 }

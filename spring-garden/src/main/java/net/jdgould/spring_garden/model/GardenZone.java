@@ -15,13 +15,14 @@ public class GardenZone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gardenZoneId;
+    @Column(nullable = false)
     private String gardenZoneName;
 
     @OneToMany(mappedBy = "gardenZone", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Plant> plants = new ArrayList<>();
 
     @ManyToOne
-    @JsonIgnore
+    @JoinColumn(nullable = false)
     private Garden garden;
 
     @Embedded
@@ -82,7 +83,7 @@ public class GardenZone {
     public List<Plant> getPlants() {
         return plants;
     }
-    
+
     //TRACKER GETTERS
     public LocalDateTime getCreationDate() {
         return gardenZoneTracker.getCreationDate();
@@ -110,5 +111,9 @@ public class GardenZone {
 
     public Optional<TrackerEvent> getLastSoilMoistureTestingEvent() {
         return TrackerEvent.getMostRecentEvent(gardenZoneTracker.getSoilMoistureHistory());
+    }
+
+    public GardenZoneTracker getTracker() {
+        return this.gardenZoneTracker;
     }
 }

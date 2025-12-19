@@ -14,10 +14,11 @@ public class Plant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long plantId;
+    @Column(nullable = false)
     private String plantName;
 
     @ManyToOne
-    @JsonIgnore
+    @JoinColumn(nullable = false)
     private GardenZone gardenZone;
 
     @Embedded
@@ -118,5 +119,9 @@ public class Plant {
 
     public Optional<TrackerEvent> getLastPestTreatmentEvent() {
         return TrackerEvent.getMostRecentEvent(plantTracker.getPestTreatmentHistory());
+    }
+
+    public PlantTracker getTracker() {
+        return this.plantTracker;
     }
 }

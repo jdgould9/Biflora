@@ -13,6 +13,7 @@ public class Garden {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gardenId;
+    @Column(nullable = false)
     private String gardenName;
 
     @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -26,15 +27,16 @@ public class Garden {
     }
 
     //SETTERS
-    public void setGardenName(){
-        this.gardenName=gardenName;
+    public void setGardenName() {
+        this.gardenName = gardenName;
     }
 
     //CLASS GETTERS
-    public Long getGardenId(){
+    public Long getGardenId() {
         return this.gardenId;
     }
-    public String getGardenName(){
+
+    public String getGardenName() {
         return this.gardenName;
     }
 

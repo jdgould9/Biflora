@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 @Component
 public class TimeService {
 
-    @Scheduled(fixedRate=5000)
+    @Scheduled(fixedRate=50000)
     public void reportCurrentTime() {
         System.out.println("The time is: "  + System.currentTimeMillis());
     }

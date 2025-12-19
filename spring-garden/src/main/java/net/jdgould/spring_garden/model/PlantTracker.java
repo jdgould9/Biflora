@@ -16,7 +16,7 @@ public class PlantTracker {
     @ElementCollection
     @CollectionTable(name = "watering_history")
     @OrderColumn
-    private List<TrackerEvent>  wateringHistory = new ArrayList<>(); //times plant was watered
+    private List<TrackerEvent> wateringHistory = new ArrayList<>(); //times plant was watered
 
     @ElementCollection
     @CollectionTable(name = "fertilization_history")
@@ -26,12 +26,12 @@ public class PlantTracker {
     @ElementCollection
     @CollectionTable(name = "pruning_history")
     @OrderColumn
-    private List<TrackerEvent>  pruningHistory = new ArrayList<>(); //times plant was pruned
+    private List<TrackerEvent> pruningHistory = new ArrayList<>(); //times plant was pruned
 
     @ElementCollection
     @CollectionTable(name = "pest_treatment_history")
     @OrderColumn
-    private List<TrackerEvent>  pestTreatmentHistory = new ArrayList<>(); //times plant was treated for pests
+    private List<TrackerEvent> pestTreatmentHistory = new ArrayList<>(); //times plant was treated for pests
 
     protected PlantTracker() {
     }
@@ -43,35 +43,35 @@ public class PlantTracker {
     }
 
     //EVENT HANDLERS
-    public void recordWatering(LocalDateTime time, String details){
+    public void recordWatering(LocalDateTime time, String details) {
         wateringHistory.add(new TrackerEvent(time, details));
     }
 
-    public void recordWatering(String details){
+    public void recordWatering(String details) {
         wateringHistory.add(new TrackerEvent(LocalDateTime.now(), details));
     }
 
-    public void recordFertilization(LocalDateTime time, String details){
+    public void recordFertilization(LocalDateTime time, String details) {
         fertilizationHistory.add(new TrackerEvent(time, details));
     }
 
-    public void recordFertilization(String details){
+    public void recordFertilization(String details) {
         fertilizationHistory.add(new TrackerEvent(LocalDateTime.now(), details));
     }
 
-    public void recordPruning(LocalDateTime time, String details){
+    public void recordPruning(LocalDateTime time, String details) {
         pruningHistory.add(new TrackerEvent(time, details));
     }
 
-    public void recordPruning(String details){
+    public void recordPruning(String details) {
         pruningHistory.add(new TrackerEvent(LocalDateTime.now(), details));
     }
 
-    public void recordPestTreatment(LocalDateTime time, String details){
+    public void recordPestTreatment(LocalDateTime time, String details) {
         pestTreatmentHistory.add(new TrackerEvent(time, details));
     }
 
-    public void recordPestTreatment(String details){
+    public void recordPestTreatment(String details) {
         pestTreatmentHistory.add(new TrackerEvent(LocalDateTime.now(), details));
     }
 

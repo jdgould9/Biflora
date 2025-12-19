@@ -21,7 +21,7 @@ POST http://localhost:8080/api/gardens/1/zones/1/plants
 Content-Type: application/json
 
 {
-    "plantName":"Plant 1 in zone 1"
+    "plantName":"Plant 1 in zone 1 in garden 1"
 }
 
 ###Garden 2
@@ -47,5 +47,5 @@ POST http://localhost:8080/api/gardens/2/zones/2/plants
 Content-Type: application/json
 
 {
-    "plantName":"Plant 1 in zone 1"
+    "plantName":"Plant 1 in zone 1 in garden 2"
 }

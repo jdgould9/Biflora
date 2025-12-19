@@ -1,5 +1,8 @@
 package net.jdgould.spring_garden.controller;
 
+import net.jdgould.spring_garden.dto.plant.PlantCreationRequestDTO;
+import net.jdgould.spring_garden.dto.plant.PlantCreationResponseDTO;
+import net.jdgould.spring_garden.dto.plant.PlantGetResponseDTO;
 import net.jdgould.spring_garden.model.Plant;
 import net.jdgould.spring_garden.service.PlantService;
 import org.springframework.http.HttpStatus;
@@ -20,20 +23,19 @@ public class PlantController {
 
     //Get all plants in a garden zone
     @GetMapping("")
-    public List<Plant> getAllPlantsInGardenZone(@PathVariable("gardenId") Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId){
+    public List<PlantGetResponseDTO> getAllPlantsInGardenZone(@PathVariable("gardenId") Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId){
         return plantService.findAllPlantsInZone(gardenId, gardenZoneId);
     }
 
     //Get plant by plant Id and garden zone Id and garden Id
     @GetMapping("/{plantId}")
-    public Plant getPlantById(@PathVariable("gardenId")  Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId, @PathVariable("plantId") Long plantId){
+    public PlantGetResponseDTO getPlantById(@PathVariable("gardenId")  Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId, @PathVariable("plantId") Long plantId){
         return plantService.findPlantInZoneById(gardenId, gardenZoneId, plantId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Garden not found"));
     }
 
     //Create plant
     @PostMapping("")
-    public Plant createPlant(@PathVariable("gardenId")  Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId, @RequestBody Map<String,String> plantRequest){
-        String plantName = plantRequest.get("plantName");
-        return plantService.addPlantToGardenZone(gardenId, gardenZoneId, plantName);
+    public PlantCreationResponseDTO createPlant(@PathVariable("gardenId")  Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId, @RequestBody PlantCreationRequestDTO plantCreationRequestDTO){
+        return plantService.addPlantToGardenZone(gardenId, gardenZoneId, plantCreationRequestDTO);
     }
 }

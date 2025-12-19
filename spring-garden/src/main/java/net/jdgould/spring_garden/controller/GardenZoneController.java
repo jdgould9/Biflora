@@ -1,5 +1,8 @@
 package net.jdgould.spring_garden.controller;
 
+import net.jdgould.spring_garden.dto.gardenzone.GardenZoneCreationRequestDTO;
+import net.jdgould.spring_garden.dto.gardenzone.GardenZoneCreationResponseDTO;
+import net.jdgould.spring_garden.dto.gardenzone.GardenZoneGetResponseDTO;
 import net.jdgould.spring_garden.model.GardenZone;
 import net.jdgould.spring_garden.service.GardenService;
 import net.jdgould.spring_garden.service.GardenZoneService;
@@ -22,20 +25,19 @@ public class GardenZoneController {
 
     //Get all garden zones in a garden
     @GetMapping("")
-    public List<GardenZone> getAllGardenZonesInGarden(@PathVariable("gardenId") Long gardenId) {
+    public List<GardenZoneGetResponseDTO> getAllGardenZonesInGarden(@PathVariable("gardenId") Long gardenId) {
         return gardenZoneService.findAllGardenZonesInGarden(gardenId);
     }
 
     //Get garden zone by garden Id and garden zone Id
     @GetMapping("/{gardenZoneId}")
-    public GardenZone getGardenZoneById(@PathVariable("gardenId") Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId) {
+    public GardenZoneGetResponseDTO getGardenZoneById(@PathVariable("gardenId") Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId) {
         return gardenZoneService.findGardenZoneById(gardenZoneId, gardenId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Garden not found"));
     }
 
     //Create garden zone
     @PostMapping("")
-    public GardenZone createGardenZone(@PathVariable("gardenId") Long gardenId, @RequestBody Map<String, String> gardenZoneRequest) {
-        String gardenZoneName = gardenZoneRequest.get("gardenZoneName");
-        return gardenZoneService.addGardenZoneToGarden(gardenId, gardenZoneName);
+    public GardenZoneCreationResponseDTO createGardenZone(@PathVariable("gardenId") Long gardenId, @RequestBody GardenZoneCreationRequestDTO gardenZoneCreationRequestDTO) {
+        return gardenZoneService.addGardenZoneToGarden(gardenId, gardenZoneCreationRequestDTO);
     }
 }

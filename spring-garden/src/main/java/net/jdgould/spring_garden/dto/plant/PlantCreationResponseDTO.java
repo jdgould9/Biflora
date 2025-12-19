@@ -1,4 +1,4 @@
 package net.jdgould.spring_garden.dto.plant;
 
-public record PlantCreationResponseDTO() {
+public record PlantCreationResponseDTO(Long plantId) {
 }
