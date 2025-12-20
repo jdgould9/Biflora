@@ -3,9 +3,8 @@ package net.jdgould.spring_garden.service;
 import net.jdgould.spring_garden.dto.garden.GardenCreationRequestDTO;
 import net.jdgould.spring_garden.dto.garden.GardenCreationResponseDTO;
 import net.jdgould.spring_garden.dto.garden.GardenGetResponseDTO;
-import net.jdgould.spring_garden.dto.gardenzone.GardenZoneGetResponseDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneSummaryDTO;
-import net.jdgould.spring_garden.model.Garden;
+import net.jdgould.spring_garden.model.garden.Garden;
 import net.jdgould.spring_garden.repository.GardenRepository;
 import org.springframework.stereotype.Service;
 

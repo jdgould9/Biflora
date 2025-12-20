@@ -1,7 +1,7 @@
 package net.jdgould.spring_garden.repository;
 
-import net.jdgould.spring_garden.model.GardenZone;
-import net.jdgould.spring_garden.model.Plant;
+import net.jdgould.spring_garden.model.gardenzone.GardenZone;
+import net.jdgould.spring_garden.model.plant.Plant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

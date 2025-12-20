@@ -1,4 +1,4 @@
-package net.jdgould.spring_garden.model;
+package net.jdgould.spring_garden.model.gardenzone;
 
 public enum GardenZoneTrackerEventType {
     WEED,

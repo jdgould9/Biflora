@@ -1,11 +1,12 @@
 //GardenSection.java
 //Represents a zone of a garden containing plant(s)
-package net.jdgould.spring_garden.model;
+package net.jdgould.spring_garden.model.gardenzone;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import net.jdgould.spring_garden.model.plant.Plant;
+import net.jdgould.spring_garden.model.tracker.TrackerEvent;
+import net.jdgould.spring_garden.model.garden.Garden;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,14 @@ public class GardenZone {
             case TEST_SOIL_PH -> gardenZoneTracker.recordSoilPhTesting(details);
             case TEST_SOIL_MOISTURE -> gardenZoneTracker.recordSoilMoistureTesting(details);
         };
+    }
+
+    public List<TrackerEvent> getEventHistory(GardenZoneTrackerEventType eventType){
+        return gardenZoneTracker.getEventHistory(eventType);
+    }
+
+    public Optional<TrackerEvent> getMostRecentEvent(GardenZoneTrackerEventType eventType){
+        return gardenZoneTracker.getMostRecentEvent(eventType);
     }
 
     //SETTERS

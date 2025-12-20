@@ -1,9 +1,10 @@
 //Garden.java
 //Represents a user's garden, containing garden zone(s), which contain plant(s)
-package net.jdgould.spring_garden.model;
+package net.jdgould.spring_garden.model.garden;
 
 
 import jakarta.persistence.*;
+import net.jdgould.spring_garden.model.gardenzone.GardenZone;
 
 import java.util.ArrayList;
 import java.util.List;

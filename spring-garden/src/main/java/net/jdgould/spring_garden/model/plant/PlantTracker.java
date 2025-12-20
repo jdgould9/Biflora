@@ -1,13 +1,14 @@
 //PlantTracker.java
 //Represents a single plant's tracker
-package net.jdgould.spring_garden.model;
+package net.jdgould.spring_garden.model.plant;
 
 import jakarta.persistence.*;
+import net.jdgould.spring_garden.model.tracker.TrackerEvent;
 
-import javax.sound.midi.Track;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Embeddable
 public class PlantTracker {
@@ -69,23 +70,21 @@ public class PlantTracker {
     }
 
     //GETTERS
+    public List<TrackerEvent> getEventHistory(PlantTrackerEventType eventType) {
+        return switch (eventType) {
+            case WATER -> wateringHistory;
+            case FERTILIZE -> fertilizationHistory;
+            case PRUNE -> pruningHistory;
+            case PEST_TREATMENT -> pestTreatmentHistory;
+        };
+    }
+
+    public Optional<TrackerEvent> getMostRecentEvent(PlantTrackerEventType eventType) {
+        List<TrackerEvent> events = getEventHistory(eventType);
+        return events.isEmpty() ? Optional.empty() : Optional.of(events.getLast());
+    }
+
     public LocalDateTime getCreationDate() {
         return creationDate;
-    }
-
-    public List<TrackerEvent> getWateringHistory() {
-        return wateringHistory;
-    }
-
-    public List<TrackerEvent> getFertilizationHistory() {
-        return fertilizationHistory;
-    }
-
-    public List<TrackerEvent> getPruningHistory() {
-        return pruningHistory;
-    }
-
-    public List<TrackerEvent> getPestTreatmentHistory() {
-        return pestTreatmentHistory;
     }
 }

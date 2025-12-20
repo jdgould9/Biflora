@@ -1,21 +1,22 @@
 package net.jdgould.spring_garden.dto.tracker;
 
-import net.jdgould.spring_garden.model.GardenZoneTracker;
-import net.jdgould.spring_garden.model.TrackerEvent;
+import net.jdgould.spring_garden.model.gardenzone.GardenZoneTracker;
+import net.jdgould.spring_garden.model.gardenzone.GardenZoneTrackerEventType;
+
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 public record GardenZoneTrackerDTO(LocalDateTime creationDate,
-                                   List<TrackerEventDTO> weedingHistory,
-                                   List<TrackerEventDTO> soilPhHistory,
-                                   List<TrackerEventDTO> soilMoistureHistory) {
+                                   Optional<TrackerEventDTO> weedingHistory,
+                                   Optional<TrackerEventDTO> soilPhHistory,
+                                   Optional<TrackerEventDTO> soilMoistureHistory) {
 
     public GardenZoneTrackerDTO(GardenZoneTracker gardenZoneTracker) {
         this(gardenZoneTracker.getCreationDate(),
-                gardenZoneTracker.getWeedingHistory().stream().map(TrackerEventDTO::new).toList(),
-                gardenZoneTracker.getSoilPhHistory().stream().map(TrackerEventDTO::new).toList(),
-                gardenZoneTracker.getSoilMoistureHistory().stream().map(TrackerEventDTO::new).toList()
+                gardenZoneTracker.getMostRecentEvent(GardenZoneTrackerEventType.WEED).map(TrackerEventDTO::new),
+                gardenZoneTracker.getMostRecentEvent(GardenZoneTrackerEventType.TEST_SOIL_PH).map(TrackerEventDTO::new),
+                gardenZoneTracker.getMostRecentEvent(GardenZoneTrackerEventType.TEST_SOIL_MOISTURE).map(TrackerEventDTO::new)
         );
     }
 }

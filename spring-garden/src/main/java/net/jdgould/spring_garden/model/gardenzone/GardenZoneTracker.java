@@ -1,12 +1,14 @@
 //GardenSectionTracker.java
 //Represents a single garden zone's tracker
-package net.jdgould.spring_garden.model;
+package net.jdgould.spring_garden.model.gardenzone;
 
 import jakarta.persistence.*;
+import net.jdgould.spring_garden.model.tracker.TrackerEvent;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Embeddable
 public class GardenZoneTracker {
@@ -57,20 +59,20 @@ public class GardenZoneTracker {
     }
 
     //GETTERS
+    public List<TrackerEvent> getEventHistory(GardenZoneTrackerEventType eventType){
+        return switch(eventType){
+            case WEED -> weedingHistory;
+            case TEST_SOIL_PH -> soilPhHistory;
+            case TEST_SOIL_MOISTURE -> soilMoistureHistory;
+        };
+    }
+
+    public Optional<TrackerEvent> getMostRecentEvent(GardenZoneTrackerEventType eventType){
+        List<TrackerEvent> events = getEventHistory(eventType);
+        return events.isEmpty() ?  Optional.empty() : Optional.of(events.getLast());
+    }
+
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
-
-    public List<TrackerEvent> getWeedingHistory() {
-        return weedingHistory;
-    }
-
-    public List<TrackerEvent> getSoilPhHistory() {
-        return soilPhHistory;
-    }
-
-    public List<TrackerEvent> getSoilMoistureHistory() {
-        return soilMoistureHistory;
-    }
-
 }

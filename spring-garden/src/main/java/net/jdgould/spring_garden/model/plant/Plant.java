@@ -1,11 +1,11 @@
 //Plant.java
 //Represents a single plant within a garden
-package net.jdgould.spring_garden.model;
+package net.jdgould.spring_garden.model.plant;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import net.jdgould.spring_garden.model.tracker.TrackerEvent;
+import net.jdgould.spring_garden.model.gardenzone.GardenZone;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +41,14 @@ public class Plant {
             case PRUNE -> plantTracker.recordPruning(details);
             case PEST_TREATMENT -> plantTracker.recordPestTreatment(details);
         };
+    }
+
+    public List<TrackerEvent> getEventHistory(PlantTrackerEventType eventType){
+        return plantTracker.getEventHistory(eventType);
+    }
+
+    public Optional<TrackerEvent> getMostRecentEvent(PlantTrackerEventType eventType){
+        return plantTracker.getMostRecentEvent(eventType);
     }
 
     //SETTERS

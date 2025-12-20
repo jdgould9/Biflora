@@ -1,4 +1,4 @@
-package net.jdgould.spring_garden.model;
+package net.jdgould.spring_garden.model.plant;
 
 public enum PlantTrackerEventType {
     WATER,

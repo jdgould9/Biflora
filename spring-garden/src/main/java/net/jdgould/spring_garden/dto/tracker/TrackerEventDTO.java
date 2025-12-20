@@ -1,6 +1,6 @@
 package net.jdgould.spring_garden.dto.tracker;
 
-import net.jdgould.spring_garden.model.TrackerEvent;
+import net.jdgould.spring_garden.model.tracker.TrackerEvent;
 
 import java.time.LocalDateTime;
 

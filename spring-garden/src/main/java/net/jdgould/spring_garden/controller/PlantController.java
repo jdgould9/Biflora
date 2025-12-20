@@ -5,14 +5,14 @@ import net.jdgould.spring_garden.dto.plant.PlantCreationResponseDTO;
 import net.jdgould.spring_garden.dto.plant.PlantGetResponseDTO;
 import net.jdgould.spring_garden.dto.tracker.PlantTrackerEventCreationRequestDTO;
 import net.jdgould.spring_garden.dto.tracker.TrackerEventCreationResponseDTO;
-import net.jdgould.spring_garden.model.Plant;
+import net.jdgould.spring_garden.dto.tracker.TrackerEventDTO;
+import net.jdgould.spring_garden.model.plant.PlantTrackerEventType;
 import net.jdgould.spring_garden.service.PlantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/gardens/{gardenId}/zones/{gardenZoneId}/plants")
@@ -34,7 +34,7 @@ public class PlantController {
     public PlantGetResponseDTO getPlantById(@PathVariable("gardenId")  Long gardenId,
                                             @PathVariable("gardenZoneId") Long gardenZoneId,
                                             @PathVariable("plantId") Long plantId){
-        return plantService.findPlantInZoneById(gardenId, gardenZoneId, plantId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Garden not found"));
+        return plantService.findPlantInZoneById(gardenId, gardenZoneId, plantId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "IMPLEMENT ME"));
     }
 
     //Create plant
@@ -47,11 +47,30 @@ public class PlantController {
 
     //Record tracker event
     @PostMapping("/{plantId}/tracker")
-    public TrackerEventCreationResponseDTO recordTrackerEvent(@PathVariable("gardenId") Long gardenId,
+    public TrackerEventCreationResponseDTO createTrackerEvent(@PathVariable("gardenId") Long gardenId,
                                                               @PathVariable("gardenZoneId") Long gardenZoneId,
                                                               @PathVariable("plantId") Long plantId,
                                                               @RequestBody PlantTrackerEventCreationRequestDTO request){
         return plantService.recordEvent(gardenId, gardenZoneId, plantId, request);
 
     }
+
+    //Get full tracker event history
+    @GetMapping("/{plantId}/tracker/{eventType}")
+    public List<TrackerEventDTO> getTrackerEventHistory(@PathVariable("gardenId") Long gardenId,
+                                                        @PathVariable("gardenZoneId") Long gardenZoneId,
+                                                        @PathVariable("plantId") Long plantId,
+                                                        @PathVariable("eventType") PlantTrackerEventType eventType){
+        return plantService.getEventHistory(gardenId, gardenZoneId, plantId, eventType);
+    }
+
+    //Get most recent tracker event
+    @GetMapping("/{plantId}/tracker/{eventType}/latest")
+    public TrackerEventDTO getMostRecentTrackerEvent(@PathVariable("gardenId") Long gardenId,
+                                                        @PathVariable("gardenZoneId") Long gardenZoneId,
+                                                        @PathVariable("plantId") Long plantId,
+                                                        @PathVariable("eventType") PlantTrackerEventType eventType){
+        return plantService.getMostRecentEvent(gardenId, gardenZoneId, plantId, eventType).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "IMPLEMENT ME"));
+    }
+
 }
