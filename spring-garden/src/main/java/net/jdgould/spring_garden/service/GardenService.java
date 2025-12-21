@@ -4,6 +4,7 @@ import net.jdgould.spring_garden.dto.garden.GardenCreationRequestDTO;
 import net.jdgould.spring_garden.dto.garden.GardenCreationResponseDTO;
 import net.jdgould.spring_garden.dto.garden.GardenGetResponseDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneSummaryDTO;
+import net.jdgould.spring_garden.exception.GardenNotFoundException;
 import net.jdgould.spring_garden.model.garden.Garden;
 import net.jdgould.spring_garden.repository.GardenRepository;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,8 @@ public class GardenService {
                 .toList();
     }
 
-    public Optional<GardenGetResponseDTO> findGardenById(Long gardenId) {
-        return gardenRepository.findById(gardenId)
-                .map(this::entityToGetResponseDTO);
+    public GardenGetResponseDTO findGardenById(Long gardenId) {
+        return entityToGetResponseDTO(findGardenEntityById(gardenId));
     }
 
     public GardenCreationResponseDTO addGarden(GardenCreationRequestDTO request) {
@@ -52,8 +52,7 @@ public class GardenService {
         );
     }
 
-    protected Optional<Garden> findGardenEntityById(Long gardenId) {
-        return gardenRepository.findById(gardenId);
+    protected Garden findGardenEntityById(Long gardenId) {
+        return gardenRepository.findById(gardenId).orElseThrow(()->new GardenNotFoundException("Garden not found with id: " + gardenId));
     }
-
 }

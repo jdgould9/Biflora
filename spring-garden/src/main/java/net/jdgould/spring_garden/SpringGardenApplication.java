@@ -24,17 +24,6 @@ public class SpringGardenApplication {
     //  Implement meaningful HTTP status for controller response:
     //  E.g. Post mapping should return CREATED, not 200 OK, CREATED is more meaningful
 
-    //TODO:
-    //  Implement exception handling w/ global exception handler, custom exceptions
-    //  Services should not throw HTTPStatus exceptions: Only controller should.
-    //  Services should throw domain exceptions when needed (E.g. GardenNotFoundException)
-    //  Controller should handle it as HTTP response
-    //  Controller catches using @ControllerAdvice for exception handling to keep controller method clean
-    //  Controller shouldn't be manually throwing status exceptions: While this is OK, it can be better
-
-
-
-
 
     @Bean
     CommandLineRunner commandLineRunner(PlantRepository repository) {

@@ -81,6 +81,7 @@ public class PlantTracker {
 
     public Optional<TrackerEvent> getMostRecentEvent(PlantTrackerEventType eventType) {
         List<TrackerEvent> events = getEventHistory(eventType);
+
         return events.isEmpty() ? Optional.empty() : Optional.of(events.getLast());
     }
 

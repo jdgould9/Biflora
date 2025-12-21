@@ -30,7 +30,7 @@ public class GardenController {
     //Get garden by Id
     @GetMapping("/{gardenId}")
     public GardenGetResponseDTO getGardenById(@PathVariable("gardenId") Long gardenId) {
-        return gardenService.findGardenById(gardenId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Garden not found"));
+        return gardenService.findGardenById(gardenId);
     }
 
     //Create garden

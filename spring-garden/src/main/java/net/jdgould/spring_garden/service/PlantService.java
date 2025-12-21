@@ -8,6 +8,9 @@ import net.jdgould.spring_garden.dto.tracker.PlantTrackerEventCreationRequestDTO
 
 import net.jdgould.spring_garden.dto.tracker.TrackerEventCreationResponseDTO;
 import net.jdgould.spring_garden.dto.tracker.TrackerEventDTO;
+import net.jdgould.spring_garden.exception.GardenZoneNotFoundException;
+import net.jdgould.spring_garden.exception.PlantNotFoundException;
+import net.jdgould.spring_garden.model.garden.Garden;
 import net.jdgould.spring_garden.model.gardenzone.GardenZone;
 import net.jdgould.spring_garden.model.plant.Plant;
 import net.jdgould.spring_garden.model.plant.PlantTrackerEventType;
@@ -28,56 +31,43 @@ public class PlantService {
         this.gardenZoneService = gardenZoneService;
     }
 
+    //PLANTS
     public List<PlantGetResponseDTO> findAllPlantsInZone(Long gardenId, Long gardenZoneId) {
-        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
+        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId);
 
         return plantRepository.findAllByGardenZone(gardenZone).stream()
                 .map(this::plantEntityToResponseDTO)
                 .toList();
     }
 
-    public Optional<PlantGetResponseDTO> findPlantInZoneById(Long gardenId, Long gardenZoneId, Long plantId) {
-        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        return plantRepository.findByPlantIdAndGardenZone(plantId, gardenZone)
-                .map(this::plantEntityToResponseDTO);
+    public PlantGetResponseDTO findPlantInZoneById(Long gardenId, Long gardenZoneId, Long plantId) {
+        Plant plant = findPlantEntityById(gardenId, gardenZoneId, plantId);
+        return plantEntityToResponseDTO(plant);
     }
 
     public PlantCreationResponseDTO addPlantToGardenZone(Long gardenId, Long gardenZoneId, PlantCreationRequestDTO request) {
-        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
+        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId);
 
         Plant savedPlant = plantRepository.save(new Plant(gardenZone, request.plantName()));
         return new PlantCreationResponseDTO(savedPlant.getPlantId());
     }
 
+    //TRACKER EVENTS
     public TrackerEventCreationResponseDTO recordEvent(Long gardenId, Long gardenZoneId, Long plantId, PlantTrackerEventCreationRequestDTO request) {
-        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Plant plant = plantRepository.findByPlantIdAndGardenZone(plantId, gardenZone).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
-
+        Plant plant = findPlantEntityById(gardenId, gardenZoneId, gardenId);
         TrackerEvent event = plant.recordEvent(request.plantTrackerEventType(), request.details());
+
         plantRepository.save(plant);
         return new TrackerEventCreationResponseDTO(event.getTime());
     }
 
     public List<TrackerEventDTO> getEventHistory(Long gardenId, Long gardenZoneId, Long plantId, PlantTrackerEventType eventType) {
-        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Plant plant = plantRepository.findByPlantIdAndGardenZone(plantId, gardenZone).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
-
+        Plant plant = findPlantEntityById(gardenId, gardenZoneId, plantId);
         return plant.getEventHistory(eventType).stream().map(TrackerEventDTO::new).toList();
     }
 
     public Optional<TrackerEventDTO> getMostRecentEvent(Long gardenId, Long gardenZoneId, Long plantId, PlantTrackerEventType eventType) {
-        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Plant plant = plantRepository.findByPlantIdAndGardenZone(plantId, gardenZone).get();//.orElseThrow(()
-        //->new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Plant plant = findPlantEntityById(gardenId, gardenZoneId, plantId);
 
        return plant.getMostRecentEvent(eventType).map(TrackerEventDTO::new);
     }
@@ -90,6 +80,13 @@ public class PlantService {
                 new PlantTrackerDTO(plant.getTracker())
         );
     }
+
+    protected Plant findPlantEntityById(Long gardenId, Long gardenZoneId, Long plantId){
+        GardenZone gardenZone = gardenZoneService.findGardenZoneEntityById(gardenZoneId, gardenId);
+
+        return plantRepository.findByPlantIdAndGardenZone(plantId, gardenZone).orElseThrow(()->new PlantNotFoundException("Plant not found with id: " + plantId));
+    }
+
 }
 
 
