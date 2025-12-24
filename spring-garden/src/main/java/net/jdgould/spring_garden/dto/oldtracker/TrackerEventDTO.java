@@ -1,4 +1,4 @@
-package net.jdgould.spring_garden.dto.tracker;
+package net.jdgould.spring_garden.dto.oldtracker;
 
 import net.jdgould.spring_garden.model.tracker.TrackerEvent;
 
@@ -8,6 +8,6 @@ public record TrackerEventDTO(LocalDateTime time,
                               String details) {
 
     public TrackerEventDTO(TrackerEvent event) {
-        this(event.getTime(), event.getDetails());
+        this(event.getActionTime(), event.getDetails());
     }
 }

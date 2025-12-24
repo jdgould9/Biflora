@@ -19,11 +19,10 @@ public class SpringGardenApplication {
     }
     //TODO:
     //  Implement testing
-
     //TODO:
-    //  Implement meaningful HTTP status for controller response:
-    //  E.g. Post mapping should return CREATED, not 200 OK, CREATED is more meaningful
-
+    //  Restructure trackers
+    //TODO:
+    //  Implement reminder/notification scheduling mechanism
 
     @Bean
     CommandLineRunner commandLineRunner(PlantRepository repository) {

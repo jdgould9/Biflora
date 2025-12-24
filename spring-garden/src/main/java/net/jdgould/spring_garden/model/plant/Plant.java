@@ -21,8 +21,8 @@ public class Plant {
     @JoinColumn(nullable = false)
     private GardenZone gardenZone;
 
-    @Embedded
-    private PlantTracker plantTracker;
+//    @Embedded
+//    private PlantTracker plantTracker;
 
     protected Plant() {
     }
@@ -30,26 +30,26 @@ public class Plant {
     public Plant(GardenZone gardenZone, String plantName) {
         this.gardenZone = gardenZone;
         this.plantName = plantName;
-        this.plantTracker = PlantTracker.create();
+//        this.plantTracker = PlantTracker.create();
     }
 
-    //EVENT HANDLERS (DELEGATION)
-    public TrackerEvent recordEvent(PlantTrackerEventType eventType, String details) {
-        return switch(eventType){
-            case WATER ->plantTracker.recordWatering(details);
-            case FERTILIZE -> plantTracker.recordFertilization(details);
-            case PRUNE -> plantTracker.recordPruning(details);
-            case PEST_TREATMENT -> plantTracker.recordPestTreatment(details);
-        };
-    }
-
-    public List<TrackerEvent> getEventHistory(PlantTrackerEventType eventType){
-        return plantTracker.getEventHistory(eventType);
-    }
-
-    public Optional<TrackerEvent> getMostRecentEvent(PlantTrackerEventType eventType){
-        return plantTracker.getMostRecentEvent(eventType);
-    }
+//    //EVENT HANDLERS (DELEGATION)
+//    public TrackerEvent recordEvent(PlantTrackerEventType eventType, String details) {
+//        return switch(eventType){
+//            case WATER ->plantTracker.recordWatering(details);
+//            case FERTILIZE -> plantTracker.recordFertilization(details);
+//            case PRUNE -> plantTracker.recordPruning(details);
+//            case PEST_TREATMENT -> plantTracker.recordPestTreatment(details);
+//        };
+//    }
+//
+//    public List<TrackerEvent> getEventHistory(PlantTrackerEventType eventType){
+//        return plantTracker.getEventHistory(eventType);
+//    }
+//
+//    public Optional<TrackerEvent> getMostRecentEvent(PlantTrackerEventType eventType){
+//        return plantTracker.getMostRecentEvent(eventType);
+//    }
 
     //SETTERS
     public void setPlantName(String plantName) {
@@ -69,10 +69,10 @@ public class Plant {
         return gardenZone;
     }
 
-    //TRACKER GETTERS
-    public PlantTracker getTracker() {
-        return this.plantTracker;
-    }
+//    //TRACKER GETTERS
+//    public PlantTracker getTracker() {
+//        return this.plantTracker;
+//    }
 
 
 }

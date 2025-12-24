@@ -4,20 +4,14 @@ import net.jdgould.spring_garden.dto.gardenzone.GardenZoneCreationRequestDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneCreationResponseDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneGetResponseDTO;
 import net.jdgould.spring_garden.dto.plant.PlantSummaryDTO;
-import net.jdgould.spring_garden.dto.tracker.GardenZoneTrackerDTO;
-import net.jdgould.spring_garden.dto.tracker.GardenZoneTrackerEventCreationRequestDTO;
-import net.jdgould.spring_garden.dto.tracker.TrackerEventCreationResponseDTO;
-import net.jdgould.spring_garden.dto.tracker.TrackerEventDTO;
 import net.jdgould.spring_garden.exception.GardenZoneNotFoundException;
 import net.jdgould.spring_garden.model.garden.Garden;
 import net.jdgould.spring_garden.model.gardenzone.GardenZone;
 import net.jdgould.spring_garden.model.gardenzone.GardenZoneTrackerEventType;
-import net.jdgould.spring_garden.model.tracker.TrackerEvent;
 import net.jdgould.spring_garden.repository.GardenZoneRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GardenZoneService {
@@ -48,33 +42,33 @@ public class GardenZoneService {
         return new GardenZoneCreationResponseDTO(savedGardenZone.getGardenZoneId());
     }
 
-    //TRACKER EVENTS
-    public TrackerEventCreationResponseDTO recordEvent(Long gardenId, Long gardenZoneId, GardenZoneTrackerEventCreationRequestDTO request) {
-        GardenZone gardenZone = findGardenZoneEntityById(gardenZoneId, gardenId);
-        TrackerEvent event = gardenZone.recordEvent(
-                request.gardenZoneTrackerEventType(), request.details()
-        );
-        gardenZoneRepository.save(gardenZone);
-
-        return new TrackerEventCreationResponseDTO(event.getTime());
-    }
-
-    public List<TrackerEventDTO> getEventHistory(Long gardenId, Long gardenZoneId, GardenZoneTrackerEventType eventType) {
-        GardenZone gardenZone = findGardenZoneEntityById(gardenZoneId, gardenId);
-        return gardenZone.getEventHistory(eventType).stream().map(TrackerEventDTO::new).toList();
-    }
-
-    public Optional<TrackerEventDTO> getMostRecentEvent(Long gardenId, Long gardenZoneId, GardenZoneTrackerEventType eventType) {
-        GardenZone gardenZone = findGardenZoneEntityById(gardenZoneId, gardenId);
-        return gardenZone.getMostRecentEvent(eventType).map(TrackerEventDTO::new);
-    }
+//    //TRACKER EVENTS
+//    public TrackerEventCreationResponseDTO recordEvent(Long gardenId, Long gardenZoneId, GardenZoneTrackerEventCreationRequestDTO request) {
+//        GardenZone gardenZone = findGardenZoneEntityById(gardenZoneId, gardenId);
+//        TrackerEvent event = gardenZone.recordEvent(
+//                request.gardenZoneTrackerEventType(), request.details()
+//        );
+//        gardenZoneRepository.save(gardenZone);
+//
+//        return new TrackerEventCreationResponseDTO(event.getTime());
+//    }
+//
+//    public List<TrackerEventDTO> getEventHistory(Long gardenId, Long gardenZoneId, GardenZoneTrackerEventType eventType) {
+//        GardenZone gardenZone = findGardenZoneEntityById(gardenZoneId, gardenId);
+//        return gardenZone.getEventHistory(eventType).stream().map(TrackerEventDTO::new).toList();
+//    }
+//
+//    public Optional<TrackerEventDTO> getMostRecentEvent(Long gardenId, Long gardenZoneId, GardenZoneTrackerEventType eventType) {
+//        GardenZone gardenZone = findGardenZoneEntityById(gardenZoneId, gardenId);
+//        return gardenZone.getMostRecentEvent(eventType).map(TrackerEventDTO::new);
+//    }
 
     //HELPERS
     private GardenZoneGetResponseDTO entityToGetResponseDTO(GardenZone gardenZone) {
         return new GardenZoneGetResponseDTO(
                 gardenZone.getGardenZoneId(),
                 gardenZone.getGardenZoneName(),
-                new GardenZoneTrackerDTO(gardenZone.getTracker()),
+//                new GardenZoneTrackerDTO(gardenZone.getTracker()),
                 gardenZone.getPlants().stream().map(
                                 p -> new PlantSummaryDTO(
                                         p.getPlantId(),

@@ -3,19 +3,12 @@ package net.jdgould.spring_garden.controller;
 import net.jdgould.spring_garden.dto.plant.PlantCreationRequestDTO;
 import net.jdgould.spring_garden.dto.plant.PlantCreationResponseDTO;
 import net.jdgould.spring_garden.dto.plant.PlantGetResponseDTO;
-import net.jdgould.spring_garden.dto.tracker.PlantTrackerEventCreationRequestDTO;
-import net.jdgould.spring_garden.dto.tracker.TrackerEventCreationResponseDTO;
-import net.jdgould.spring_garden.dto.tracker.TrackerEventDTO;
-import net.jdgould.spring_garden.model.plant.PlantTrackerEventType;
 import net.jdgould.spring_garden.service.PlantService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/gardens/{gardenId}/zones/{gardenZoneId}/plants")
@@ -49,36 +42,36 @@ public class PlantController {
         URI location = URI.create("/api/gardens/" + gardenId + "/zones/" + gardenZoneId + "/plants/" + response.plantId());
         return ResponseEntity.created(location).body(response);
     }
-
-    //Record tracker event
-    @PostMapping("/{plantId}/tracker")
-    public ResponseEntity<TrackerEventCreationResponseDTO> createTrackerEvent(@PathVariable("gardenId") Long gardenId,
-                                                              @PathVariable("gardenZoneId") Long gardenZoneId,
-                                                              @PathVariable("plantId") Long plantId,
-                                                              @RequestBody PlantTrackerEventCreationRequestDTO request) {
-        TrackerEventCreationResponseDTO response = plantService.recordEvent(gardenId, gardenZoneId, plantId, request);
-        URI location = URI.create("/api/gardens/" + gardenId + "/zones/" + gardenZoneId + "/plants/" + plantId + "/tracker/" + request.plantTrackerEventType() + "/latest");
-        return ResponseEntity.created(location).body(response);
-    }
-
-    //Get full tracker event history
-    @GetMapping("/{plantId}/tracker/{eventType}")
-    public List<TrackerEventDTO> getTrackerEventHistory(@PathVariable("gardenId") Long gardenId,
-                                                        @PathVariable("gardenZoneId") Long gardenZoneId,
-                                                        @PathVariable("plantId") Long plantId,
-                                                        @PathVariable("eventType") PlantTrackerEventType eventType) {
-        return plantService.getEventHistory(gardenId, gardenZoneId, plantId, eventType);
-    }
-
-    //Get most recent tracker event
-    @GetMapping("/{plantId}/tracker/{eventType}/latest")
-    public ResponseEntity<TrackerEventDTO> getMostRecentTrackerEvent(@PathVariable("gardenId") Long gardenId,
-                                                                     @PathVariable("gardenZoneId") Long gardenZoneId,
-                                                                     @PathVariable("plantId") Long plantId,
-                                                                     @PathVariable("eventType") PlantTrackerEventType eventType) {
-        return plantService.getMostRecentEvent(gardenId, gardenZoneId, plantId, eventType)
-                .map(ResponseEntity::ok)
-                .orElseGet(()->ResponseEntity.noContent().build());
-    }
+//
+//    //Record tracker event
+//    @PostMapping("/{plantId}/tracker")
+//    public ResponseEntity<TrackerEventCreationResponseDTO> createTrackerEvent(@PathVariable("gardenId") Long gardenId,
+//                                                              @PathVariable("gardenZoneId") Long gardenZoneId,
+//                                                              @PathVariable("plantId") Long plantId,
+//                                                              @RequestBody PlantTrackerEventCreationRequestDTO request) {
+//        TrackerEventCreationResponseDTO response = plantService.recordEvent(gardenId, gardenZoneId, plantId, request);
+//        URI location = URI.create("/api/gardens/" + gardenId + "/zones/" + gardenZoneId + "/plants/" + plantId + "/tracker/" + request.plantTrackerEventType() + "/latest");
+//        return ResponseEntity.created(location).body(response);
+//    }
+//
+//    //Get full tracker event history
+//    @GetMapping("/{plantId}/tracker/{eventType}")
+//    public List<TrackerEventDTO> getTrackerEventHistory(@PathVariable("gardenId") Long gardenId,
+//                                                        @PathVariable("gardenZoneId") Long gardenZoneId,
+//                                                        @PathVariable("plantId") Long plantId,
+//                                                        @PathVariable("eventType") PlantTrackerEventType eventType) {
+//        return plantService.getEventHistory(gardenId, gardenZoneId, plantId, eventType);
+//    }
+//
+//    //Get most recent tracker event
+//    @GetMapping("/{plantId}/tracker/{eventType}/latest")
+//    public ResponseEntity<TrackerEventDTO> getMostRecentTrackerEvent(@PathVariable("gardenId") Long gardenId,
+//                                                                     @PathVariable("gardenZoneId") Long gardenZoneId,
+//                                                                     @PathVariable("plantId") Long plantId,
+//                                                                     @PathVariable("eventType") PlantTrackerEventType eventType) {
+//        return plantService.getMostRecentEvent(gardenId, gardenZoneId, plantId, eventType)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(()->ResponseEntity.noContent().build());
+//    }
 
 }

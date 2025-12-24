@@ -1,29 +1,33 @@
 package net.jdgould.spring_garden.model.tracker;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-@Embeddable
+//TrackerEvent is individual tracker assignment events
+@Entity
 public class TrackerEvent {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long trackerEventId;
+
+    @ManyToOne
+    private TrackerAssignment trackerAssignment;
 
     @Column(nullable = false)
-    private LocalDateTime time;
+    private LocalDateTime actionTime;
 
-    @Column(nullable = false)
     private String details;
 
     protected TrackerEvent() {}
 
-    public TrackerEvent(LocalDateTime time, String details) {
-        this.time = time;
+    public TrackerEvent(LocalDateTime actionTime, String details) {
+        this.actionTime = actionTime;
         this.details = details;
     }
 
-    public LocalDateTime getTime() { return time; }
+    public LocalDateTime getActionTime() { return actionTime; }
     public String getDetails() { return details; }
 
     public static Optional<TrackerEvent> getMostRecentEvent(List<TrackerEvent> history) {

@@ -1,4 +1,4 @@
-package net.jdgould.spring_garden.dto.tracker;
+package net.jdgould.spring_garden.dto.oldtracker;
 
 import java.time.LocalDateTime;
 

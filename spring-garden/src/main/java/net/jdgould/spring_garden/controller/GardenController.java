@@ -4,12 +4,8 @@ import net.jdgould.spring_garden.dto.garden.GardenCreationRequestDTO;
 import net.jdgould.spring_garden.dto.garden.GardenCreationResponseDTO;
 import net.jdgould.spring_garden.dto.garden.GardenGetResponseDTO;
 import net.jdgould.spring_garden.service.GardenService;
-import net.jdgould.spring_garden.service.GardenZoneService;
-import net.jdgould.spring_garden.service.PlantService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;

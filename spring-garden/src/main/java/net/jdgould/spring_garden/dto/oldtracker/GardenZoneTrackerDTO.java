@@ -1,4 +1,4 @@
-package net.jdgould.spring_garden.dto.tracker;
+package net.jdgould.spring_garden.dto.oldtracker;
 
 import net.jdgould.spring_garden.model.gardenzone.GardenZoneTracker;
 import net.jdgould.spring_garden.model.gardenzone.GardenZoneTrackerEventType;
