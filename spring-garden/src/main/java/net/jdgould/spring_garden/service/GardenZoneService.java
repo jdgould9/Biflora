@@ -3,6 +3,7 @@ package net.jdgould.spring_garden.service;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneCreationRequestDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneCreationResponseDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneGetResponseDTO;
+import net.jdgould.spring_garden.dto.gardenzone.GardenZoneUpdateRequestDTO;
 import net.jdgould.spring_garden.dto.plant.PlantSummaryDTO;
 import net.jdgould.spring_garden.exception.GardenZoneNotFoundException;
 import net.jdgould.spring_garden.model.garden.Garden;
@@ -42,6 +43,13 @@ public class GardenZoneService {
     public void deleteGardenZoneById(Long gardenZoneId, Long gardenId){
         GardenZone gardenZone = findGardenZoneEntityById(gardenZoneId, gardenId);
         gardenZoneRepository.delete(gardenZone);
+    }
+
+    public GardenZoneGetResponseDTO updateGardenZoneById(Long gardenZoneId, Long gardenId, GardenZoneUpdateRequestDTO request){
+        GardenZone gardenZone = findGardenZoneEntityById(gardenZoneId, gardenId);
+        gardenZone.setName(request.gardenZoneName());
+        gardenZoneRepository.save(gardenZone);
+        return entityToGetResponseDTO(gardenZone);
     }
 
     //HELPERS

@@ -1,6 +1,4 @@
-###Garden 1
-
-### Add a garden 1
+### Add a garden
 POST http://localhost:8080/api/gardens
 Content-Type: application/json
 
@@ -8,7 +6,7 @@ Content-Type: application/json
     "gardenName":"Garden 1"
 }
 
-### Patch garden 1
+### Patch garden:1
 PATCH http://localhost:8080/api/gardens/1
 Content-Type: application/json
 
@@ -17,8 +15,7 @@ Content-Type: application/json
 }
 
 
-
-### Add a zone 1 to garden 1
+### Add a zone to garden:1
 POST http://localhost:8080/api/gardens/1/zones
 Content-Type: application/json
 
@@ -26,7 +23,15 @@ Content-Type: application/json
     "gardenZoneName":"Zone 1 in garden 1"
 }
 
-### Add a plant 1 to zone 1 in garden 1
+### Patch zone:2
+PATCH http://localhost:8080/api/gardens/1/zones/2
+Content-Type: application/json
+
+{
+    "gardenZoneName":"updatedzzz"
+}
+
+### Add a plant to zone:2
 POST http://localhost:8080/api/gardens/1/zones/2/plants
 Content-Type: application/json
 
@@ -34,40 +39,20 @@ Content-Type: application/json
     "plantName":"Plant 3 in zone 2 in garden 1"
 }
 
-### Delete a garden
+### Patch plant:3
+PATCH http://localhost:8080/api/gardens/1/zones/2/plants/3
+Content-Type: application/json
+
+{
+    "plantName":"fuck 1"
+}
+
+### Delete a garden:1
 DELETE http://localhost:8080/api/gardens/1
 
-### Delete a garden zone
+### Delete a zone:2
 DELETE http://localhost:8080/api/gardens/1/zones/2
 
-### Delete a plant
+### Delete a plant:3
 DELETE http://localhost:8080/api/gardens/1/zones/2/plants/3
 
-###Get a garden
-GET http://localhost:8080/api/gardens/1
-
-###Garden 2
-
-### Add a garden 2
-POST http://localhost:8080/api/gardens
-Content-Type: application/json
-
-{
-    "gardenName":"Garden 2"
-}
-
-### Add a zone 1 to garden 2
-POST http://localhost:8080/api/gardens/4/zones
-Content-Type: application/json
-
-{
-    "gardenZoneName":"Zone 1 in garden 2"
-}
-
-### Add a plant 1 to zone 1 in garden 2
-POST http://localhost:8080/api/gardens/4/zones/5/plants
-Content-Type: application/json
-
-{
-    "plantName":"Plant 1 in zone 1 in garden 2"
-}

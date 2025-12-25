@@ -1,8 +1,10 @@
 package net.jdgould.spring_garden.controller;
 
+import net.jdgould.spring_garden.dto.garden.GardenGetResponseDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneCreationRequestDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneCreationResponseDTO;
 import net.jdgould.spring_garden.dto.gardenzone.GardenZoneGetResponseDTO;
+import net.jdgould.spring_garden.dto.gardenzone.GardenZoneUpdateRequestDTO;
 import net.jdgould.spring_garden.service.GardenZoneService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +46,16 @@ public class GardenZoneController {
     public ResponseEntity<Void> deleteGardenZoneById(@PathVariable("gardenId") Long gardenId, @PathVariable("gardenZoneId") Long gardenZoneId){
         gardenZoneService.deleteGardenZoneById(gardenZoneId, gardenId);
         return ResponseEntity.noContent().build();
+    }
+
+    //Update garden zone info
+    @PatchMapping("/{gardenZoneId}")
+    public ResponseEntity<GardenZoneGetResponseDTO> updateGardenById(@PathVariable("gardenId") Long gardenId,
+                                                                 @PathVariable("gardenZoneId") Long gardenZoneId,
+                                                                 @RequestBody GardenZoneUpdateRequestDTO request){
+        GardenZoneGetResponseDTO response = gardenZoneService.updateGardenZoneById(gardenZoneId, gardenId, request);
+        return ResponseEntity.ok(response);
+
     }
 
 

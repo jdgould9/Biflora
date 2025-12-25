@@ -4,6 +4,7 @@ import net.jdgould.spring_garden.dto.plant.PlantCreationRequestDTO;
 import net.jdgould.spring_garden.dto.plant.PlantCreationResponseDTO;
 import net.jdgould.spring_garden.dto.plant.PlantGetResponseDTO;
 
+import net.jdgould.spring_garden.dto.plant.PlantUpdateRequestDTO;
 import net.jdgould.spring_garden.exception.PlantNotFoundException;
 import net.jdgould.spring_garden.model.gardenzone.GardenZone;
 import net.jdgould.spring_garden.model.plant.Plant;
@@ -45,6 +46,13 @@ public class PlantService {
     public void deletePlantById(Long gardenId, Long gardenZoneId, Long plantId){
         Plant plant = findPlantEntityById(gardenId, gardenZoneId, plantId);
         plantRepository.delete(plant);
+    }
+
+    public PlantGetResponseDTO updatePlantById(Long gardenId, Long gardenZoneId, Long plantId, PlantUpdateRequestDTO request){
+        Plant plant = findPlantEntityById(gardenId, gardenZoneId, plantId);
+        plant.setName(request.plantName());
+        plantRepository.save(plant);
+        return plantEntityToResponseDTO(plant);
     }
 
     //HELPERS
