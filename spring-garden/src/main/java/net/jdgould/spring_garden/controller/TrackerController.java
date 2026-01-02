@@ -138,6 +138,4 @@ public class TrackerController {
         trackerService.deleteTrackerEventById(trackerEventId, trackerAssignmentId, trackerPolicyId);
         return ResponseEntity.noContent().build();
     }
-
-
 }
