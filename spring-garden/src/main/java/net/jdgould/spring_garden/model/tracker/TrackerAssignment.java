@@ -38,4 +38,20 @@ public class TrackerAssignment {
         this.trackerPolicy = trackerPolicy;
         this.assignedTo = assignedTo;
     }
+
+    public void setTrackerPolicy(TrackerPolicy trackerPolicy){
+        this.trackerPolicy=trackerPolicy;
+    }
+
+    public Long getTrackerAssignmentId() {
+        return trackerAssignmentId;
+    }
+
+    public Long getAssignedToId() {
+        return assignedTo.getId();
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
 }

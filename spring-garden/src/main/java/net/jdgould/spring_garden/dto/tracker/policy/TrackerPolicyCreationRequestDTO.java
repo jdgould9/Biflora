@@ -1,4 +1,4 @@
-package net.jdgould.spring_garden.dto.tracker;
+package net.jdgould.spring_garden.dto.tracker.policy;
 
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;

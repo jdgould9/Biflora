@@ -1,0 +1,4 @@
+package net.jdgould.spring_garden.dto.tracker.event;
+
+public record TrackerAssignmentCreationResponseDTO(Long trackerAssignmentId) {
+}

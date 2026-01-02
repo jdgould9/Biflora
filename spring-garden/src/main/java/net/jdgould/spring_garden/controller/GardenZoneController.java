@@ -57,34 +57,4 @@ public class GardenZoneController {
         return ResponseEntity.ok(response);
 
     }
-
-
-//    //Record tracker event
-//    @PostMapping("{gardenZoneId}/tracker")
-//    public ResponseEntity<TrackerEventCreationResponseDTO> createTrackerEvent(@PathVariable("gardenId") Long gardenId,
-//                                                              @PathVariable("gardenZoneId") Long gardenZoneId,
-//                                                              @RequestBody GardenZoneTrackerEventCreationRequestDTO request) {
-//
-//        TrackerEventCreationResponseDTO response = gardenZoneService.recordEvent(gardenId, gardenZoneId, request);
-//        URI location = URI.create("/api/gardens/" + gardenId + "/zones/" + gardenZoneId + "/tracker/" + request.gardenZoneTrackerEventType() + "/latest");
-//        return ResponseEntity.created(location).body(response);
-//    }
-//
-//    //Get full tracker event history
-//    @GetMapping("{gardenZoneId}/tracker/{eventType}")
-//    public List<TrackerEventDTO> getTrackerEventHistory(@PathVariable("gardenId") Long gardenId,
-//                                                        @PathVariable("gardenZoneId") Long gardenZoneId,
-//                                                        @PathVariable("eventType") GardenZoneTrackerEventType eventType) {
-//        return gardenZoneService.getEventHistory(gardenId, gardenZoneId, eventType);
-//    }
-//
-//    //Get most recent tracker event
-//    @GetMapping("{gardenZoneId}/tracker/{eventType}/latest")
-//    public ResponseEntity<TrackerEventDTO> getMostRecentTrackerEvent(@PathVariable("gardenId") Long gardenId,
-//                                                                     @PathVariable("gardenZoneId") Long gardenZoneId,
-//                                                                     @PathVariable("eventType") GardenZoneTrackerEventType eventType) {
-//        return gardenZoneService.getMostRecentEvent(gardenId, gardenZoneId, eventType)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(()->ResponseEntity.noContent().build());
-//    }
 }

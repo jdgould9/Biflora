@@ -4,6 +4,7 @@ package net.jdgould.spring_garden.model.tracker;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.sound.midi.Track;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,16 @@ public class TrackerPolicy {
 
     public List<TrackerAssignment> getTrackerAssignments() {
         return trackerAssignments;
+    }
+
+    public void addTrackerAssignment(TrackerAssignment trackerAssignment){
+        this.trackerAssignments.add(trackerAssignment);
+        trackerAssignment.setTrackerPolicy(this);
+    }
+
+    public void removeTrackerAssignment(TrackerAssignment trackerAssignment){
+        this.trackerAssignments.remove(trackerAssignment);
+        trackerAssignment.setTrackerPolicy(null);
     }
 
     public String getName() {

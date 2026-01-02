@@ -23,9 +23,9 @@ public class GardenZoneService {
         this.gardenService=gardenService;
     }
 
-    public GardenZoneCreationResponseDTO addGardenZoneToGarden(Long gardenId, GardenZoneCreationRequestDTO requestDTO) {
+    public GardenZoneCreationResponseDTO addGardenZoneToGarden(Long gardenId, GardenZoneCreationRequestDTO request) {
         Garden garden = gardenService.findGardenEntityById(gardenId);
-        GardenZone savedGardenZone = gardenZoneRepository.save(new GardenZone(garden, requestDTO.gardenZoneName()));
+        GardenZone savedGardenZone = gardenZoneRepository.save(new GardenZone(garden, request.gardenZoneName()));
         garden.addGardenZone(savedGardenZone);
 
         return new GardenZoneCreationResponseDTO(savedGardenZone.getId());
