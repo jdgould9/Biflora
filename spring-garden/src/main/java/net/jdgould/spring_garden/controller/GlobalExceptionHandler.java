@@ -59,4 +59,10 @@ public class GlobalExceptionHandler {
         return e.getMessage();
     }
 
+    @ExceptionHandler(InvalidTrackerAssignmentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInvalidTrackerAssignment(InvalidTrackerAssignmentException e){
+        return e.getMessage();
+    }
+
 }

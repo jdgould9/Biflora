@@ -17,6 +17,10 @@ public class TrackerPolicy {
     @Column(name = "tracker_id")
     private Long trackerPolicyId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TrackableType targetType;
+
     @OneToMany(mappedBy = "trackerPolicy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TrackerAssignment> trackerAssignments = new ArrayList<>();
 
@@ -36,8 +40,9 @@ public class TrackerPolicy {
     protected TrackerPolicy() {
     }
 
-    public TrackerPolicy(String name, String description, Integer intervalHours) {
+    public TrackerPolicy(String name, TrackableType targetType, String description, Integer intervalHours) {
         this.name = name;
+        this.targetType=targetType;
         this.description = description;
         this.intervalHours = intervalHours;
     }
@@ -88,4 +93,7 @@ public class TrackerPolicy {
         return creationTime;
     }
 
+    public TrackableType getTargetType() {
+        return targetType;
+    }
 }

@@ -61,13 +61,13 @@ public class GardenZoneService {
     private GardenZoneGetResponseDTO entityToGetResponseDTO(GardenZone gardenZone) {
         return new GardenZoneGetResponseDTO(
                 gardenZone.getId(),
-                gardenZone.getName(),
-                gardenZone.getPlants().stream().map(
-                                p -> new PlantSummaryDTO(
-                                        p.getId(),
-                                        p.getName()
-                                ))
-                        .toList()
+                gardenZone.getName()
+//                gardenZone.getPlants().stream().map(
+//                                p -> new PlantSummaryDTO(
+//                                        p.getId(),
+//                                        p.getName()
+//                                ))
+//                        .toList()
         );
     }
 

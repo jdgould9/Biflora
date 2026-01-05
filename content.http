@@ -4,7 +4,7 @@ POST http://localhost:8080/api/gardens
 Content-Type: application/json
 
 {
-    "gardenName":"Garden 1"
+    "gardenName":"Garden A"
 }
 
 ### Add another garden
@@ -12,7 +12,7 @@ POST http://localhost:8080/api/gardens
 Content-Type: application/json
 
 {
-    "gardenName":"Garden 2"
+    "gardenName":"Garden B"
 }
 
 ### Get all gardens
@@ -30,7 +30,7 @@ POST http://localhost:8080/api/gardens/1/zones
 Content-Type: application/json
 
 {
-    "gardenZoneName":"Zone 1 in Garden 1"
+    "gardenZoneName":"Zone A"
 }
 
 ### Add another garden zone
@@ -38,7 +38,7 @@ POST http://localhost:8080/api/gardens/1/zones
 Content-Type: application/json
 
 {
-    "gardenZoneName":"Zone 2 in Garden 1"
+    "gardenZoneName":"Zone B"
 }
 
 ### Get all garden zones
@@ -59,7 +59,7 @@ POST http://localhost:8080/api/gardens/1/zones/2/plants
 Content-Type: application/json
 
 {
-    "plantName":"Plant 1 in zone 1"
+    "plantName":"Plant A"
 }
 
 ### Add another plant
@@ -67,17 +67,17 @@ POST http://localhost:8080/api/gardens/1/zones/2/plants
 Content-Type: application/json
 
 {
-    "plantName":"Plant 2 in zone 1"
+    "plantName":"Plant B"
 }
 
 ### Get all plants
-GET http://localhost:8080/api/gardens/1/zones
+GET http://localhost:8080/api/gardens/1/zones/2/plants
 
 ### Get plant by ID
-GET http://localhost:8080/api/gardens/1/zones/1
+GET http://localhost:8080/api/gardens/1/zones/2/plants/3
 
 ### Delete a plant
-DELETE http://localhost:8080/api/gardens/1/zones/1
+DELETE http://localhost:8080/api/gardens/1/zones/2/plants/3
 
 ### --------------------------------------------------TRACKER OPERATIONS--------------------------------------------------
 ### Get all trackables
@@ -92,9 +92,10 @@ POST http://localhost:8080/api/trackers
 Content-Type: application/json
 
 {
-    "trackerName":"My first tracker: watering",
-    "trackerDescription":"Water all the items in these areas",
-    "intervalHours":"48"
+    "trackerName":"Policy A",
+    "trackerDescription":"Policy A Description",
+    "targetType":"PLANT",
+    "intervalHours":"12"
 }
 
 
@@ -103,8 +104,9 @@ POST http://localhost:8080/api/trackers
 Content-Type: application/json
 
 {
-    "trackerName":"My second tracker: weed",
-    "trackerDescription":"Water all the items in these areas",
+    "trackerName":"Policy B",
+    "trackerDescription":"Policy B Description",
+    "targetType":"GARDEN",
     "intervalHours":"24"
 }
 
@@ -123,15 +125,23 @@ POST http://localhost:8080/api/trackers/1/assignments
 Content-Type: application/json
 
 {
-    "trackableId":"1"
+    "trackableId":"3"
 }
 
-### Add another tracker assignment
+### Add a tracker assignment (invalid)
 POST http://localhost:8080/api/trackers/1/assignments
 Content-Type: application/json
 
 {
-    "trackableId":"3"
+    "trackableId":"1"
+}
+
+### Add another tracker assignment (invalid)
+POST http://localhost:8080/api/trackers/1/assignments
+Content-Type: application/json
+
+{
+    "trackableId":"2"
 }
 
 ### Get all tracker assignments
@@ -149,7 +159,7 @@ POST http://localhost:8080/api/trackers/1/assignments/1/events
 Content-Type: application/json
 
 {
-    "eventDetails":"I watered my tomatos"
+    "eventDetails":"Event A"
 }
 
 ### Add another tracker event
@@ -157,7 +167,7 @@ POST http://localhost:8080/api/trackers/1/assignments/1/events
 Content-Type: application/json
 
 {
-    "eventDetails":"I watered my cabbages"
+    "eventDetails":"Event B"
 }
 
 ### Get all tracker event

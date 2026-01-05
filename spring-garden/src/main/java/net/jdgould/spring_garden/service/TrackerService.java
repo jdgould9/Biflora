@@ -79,7 +79,7 @@ public class TrackerService {
 
     ///TRACKER POLICY
     public TrackerPolicyCreationResponseDTO addTrackerPolicy(TrackerPolicyCreationRequestDTO request) {
-        TrackerPolicy savedTrackerPolicy = trackerPolicyRepository.save(new TrackerPolicy(request.trackerName(), request.trackerDescription(), request.intervalHours()));
+        TrackerPolicy savedTrackerPolicy = trackerPolicyRepository.save(new TrackerPolicy(request.trackerName(), request.targetType(), request.trackerDescription(), request.intervalHours()));
         return new TrackerPolicyCreationResponseDTO(savedTrackerPolicy.getTrackerPolicyId());
     }
 
@@ -120,6 +120,11 @@ public class TrackerService {
     public TrackerAssignmentCreationResponseDTO addTrackerAssignment(Long trackerPolicyId, TrackerAssignmentCreationRequestDTO request){
         TrackerPolicy trackerPolicy = findTrackerPolicyEntityById(trackerPolicyId);
         Trackable trackable = findTrackableEntityById(request.trackableId());
+
+        //Check to make sure trackerPolicy's targetType and trackable's trackableType are compatible
+        if(trackerPolicy.getTargetType()!=trackable.getTrackableType()){
+            throw new InvalidTrackerAssignmentException("Tracker policy is for " + trackerPolicy.getTargetType() +", trackable entity is of type " + trackable.getTrackableType());
+        }
 
         //Check to make sure tracker assignment doesn't already exist
         if(trackerAssignmentRepository.findTrackerAssignmentByAssignedToAndTrackerPolicy(trackable, trackerPolicy).isPresent()){
@@ -205,6 +210,7 @@ public class TrackerService {
     private TrackerPolicyGetResponseDTO trackerPolicyEntityToGetResponseDTO(TrackerPolicy trackerPolicy) {
         return new TrackerPolicyGetResponseDTO(
                 trackerPolicy.getTrackerPolicyId(),
+                trackerPolicy.getTargetType(),
                 trackerPolicy.getName(),
                 trackerPolicy.getDescription(),
                 trackerPolicy.getIntervalHours(),
