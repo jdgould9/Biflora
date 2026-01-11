@@ -3,7 +3,9 @@ package net.jdgould.spring_garden;
 import net.jdgould.spring_garden.model.garden.Garden;
 import net.jdgould.spring_garden.model.gardenzone.GardenZone;
 import net.jdgould.spring_garden.model.plant.Plant;
+import net.jdgould.spring_garden.repository.GardenRepository;
 import net.jdgould.spring_garden.repository.PlantRepository;
+import net.jdgould.spring_garden.service.GardenService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,10 +28,6 @@ public class SpringGardenApplication {
     //TODO:
     //  PROPERLY configure CORS
 
-
-
-
-
     /// Features (most to least important)
     //TODO:
     //  Frontend
@@ -41,12 +39,4 @@ public class SpringGardenApplication {
     //  See overdue trackers
     //TODO:
     //  Role-based user access (admin, gardener, viewer)
-
-    @Bean
-    CommandLineRunner commandLineRunner(PlantRepository repository) {
-        return args -> {
-
-        };
-    }
-
 }

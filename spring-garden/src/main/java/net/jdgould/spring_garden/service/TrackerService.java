@@ -214,7 +214,21 @@ public class TrackerService {
                 trackerPolicy.getName(),
                 trackerPolicy.getDescription(),
                 trackerPolicy.getIntervalHours(),
-                trackerPolicy.getCreationTime()
+                trackerPolicy.getCreationTime(),
+                trackerPolicy.getTrackerAssignments().stream()
+                        .map(ta -> new TrackerAssignmentGetResponseDTO(
+                                        ta.getTrackerAssignmentId(),
+                                        ta.getAssignedToId(),
+                                        ta.getStartDate(),
+                                        ta.getTrackerEvents().stream()
+                                                .map(te -> new TrackerEventGetResponseDTO(
+                                                                te.getTrackerEventId(),
+                                                                te.getRecordedTime(),
+                                                                te.getDetails()
+                                                        )
+                                                ).toList()
+                                )
+                        ).toList()
         );
     }
 
@@ -222,7 +236,14 @@ public class TrackerService {
         return new TrackerAssignmentGetResponseDTO(
                 trackerAssignment.getTrackerAssignmentId(),
                 trackerAssignment.getAssignedToId(),
-                trackerAssignment.getStartDate()
+                trackerAssignment.getStartDate(),
+                trackerAssignment.getTrackerEvents().stream()
+                        .map(te -> new TrackerEventGetResponseDTO(
+                                        te.getTrackerEventId(),
+                                        te.getRecordedTime(),
+                                        te.getDetails()
+                                )
+                        ).toList()
         );
     }
 

@@ -20,6 +20,7 @@ public class GardenController {
         this.gardenService = gardenService;
     }
 
+
     //Create garden
     @PostMapping("")
     public ResponseEntity<GardenCreationResponseDTO> createGarden(@RequestBody GardenCreationRequestDTO request) {

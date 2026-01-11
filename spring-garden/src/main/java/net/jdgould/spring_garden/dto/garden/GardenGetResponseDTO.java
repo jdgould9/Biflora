@@ -7,5 +7,5 @@ import java.util.List;
 
 public record GardenGetResponseDTO(Long gardenId,
                                    String gardenName,
-                                   List<GardenZoneSummaryDTO> gardenZones) {
+                                   List<GardenZoneGetResponseDTO> gardenZones) {
 }

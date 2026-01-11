@@ -4,84 +4,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>My Spring Garden</title>
+  <title>Biflora</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <!-- 
-  <div id="gardenInterface">
-    <section class="selectionSection">
-      <label for="gardenSelection">Garden:</label>
-      <select name="gardenSelection" id="gardenSelection">
-        <option value="" disabled selected>Select a garden</option>
-      </select>
-    </section>
-
-    <section class="selectionSection">
-      <label for="gardenZoneSelection">Garden zone:</label>
-      <select name="gardenZoneSelection" id="gardenZoneSelection">
-        <option value="" disabled selected>Select a garden zone</option>
-      </select>
-    </section>
-
-    <section class="selectionSection"></section>
-    <label for="plantSelection">Plant:</label>
-    <select name="plantSelection" id="plantSelection">
-      <option value="" disabled selected>Select a plant</option>
-    </select>
-  </div>
-
-  <div id="trackerInterface">
-    <section class="selectionSection">
-      <label for="trackerPolicySelection">Tracker policy:</select>
-        <select name="trackerPolicySelection" id="trackerPolicySelection">
-          <option value="" disabled selected>Select a tracker policy</option>
-        </select>
-    </section>
-
-    <section class="selectionSection">
-      <label for="trackerAssignmentSelection">Tracker assignment</select>
-        <select name="trackerAssignmentSelection" id="trackerAssignmentSelection">
-          <option value="" disabled selected>Select a tracker assignment</option>
-        </select>
-    </section>
-
-    <section class="selectionSection">
-      <label for="trackerEventSelection">Tracker event:</select>
-        <select name="trackerEventSelection" id="trackerEventSelection">
-          <option value="" disabled selected>Select a tracker event</option>
-        </select>
-    </section>
-  </div> -->
-
   <header>
-    <h1><a>SpringGarden</a></h1>
+    <h1><a>Biflora</a></h1>
   </header>
 
   <nav>
-    <!-- DIV: Garden/Tracker policy navigation -->
     <div>
       <h2>Gardens</h2>
-      <ul id="gardensNavList">
+      <ul id="gardennavlist">
 
       </ul>
     </div>
 
     <div>
       <h2>Trackers</h2>
-      <ul id="trackersNavList">
+      <ul>
+        <li>Garden</li>
+        <ul id="gardentrackerpolicynavlist">
 
+        </ul>
+        <li>Garden zone</li>
+        <ul id="gardenzonetrackerpolicynavlist">
+
+        </ul>
+        <li>Plant</li>
+        <ul id="planttrackerpolicynavlist">
+
+        </ul>
       </ul>
     </div>
 
 
-    <!-- DIV: Navbar Create garden/tracker policy -->
     <div>
-      <button>+ Create garden</button>
-      <button>+ Create tracker</button>
+      <button id="creategarden">+ Create garden</button>
+      <button id="createtrackerpolicy">+ Create tracker</button>
     </div>
   </nav>
+
+
+
+
 
 
 
@@ -89,25 +56,48 @@
   <main>
     <!-- DIV: Management info -->
     <div>
-      <h2>Managing:</h2>
+      <h2 id="managingheader">Managing:</h2>
+    </div>
+
+    <!-- DIV: Garden/Zone/Plant/Policy details
+       Entity list -->
+    <div id="interiordetails">
+      <h3 id="interiordetailsheader">Interior details</h3>
+      <ul id="interiordetailslist"></ul>
+
+    </div>
+
+    <!-- DIV: Garden/Zone/Plant tracker details
+          Policy assignment details 
+     -->
+    <div id="assignmentdetails">
+      <h3 id="assignmentdetailsheader">Assignment details</h3>
+      <ul id="assignmentdetailslist">
+
+      </ul>
+
     </div>
 
 
+    <!-- Selected details -->
     <aside>
-      <!-- DIV: Garden/Zone/Plant/Policy details
-       Entity list -->
+      <!-- Selected details (garden/zone/plant/tracker) -->
       <div>
-        <h3>Details</h3>
+        <h3 id="selecteddetailsheader">Selected Details</h3>
+        <ul id="selecteddetailslist">
+
+        </ul>
+      </div>
+
+
+      </div>
+      <!-- tracker details(garden/zone/plant) -->
+      <!-- policy details(tracker) -->
+      <div>
+
 
       </div>
 
-      <!-- DIV: Garden/Zone/Plant tracker details
-          Policy assignment details 
-     -->
-      <div>
-        <h3>Details</h3>
-
-      </div>
     </aside>
 
   </main>

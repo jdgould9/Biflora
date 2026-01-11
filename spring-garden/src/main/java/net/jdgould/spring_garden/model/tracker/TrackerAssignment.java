@@ -67,4 +67,8 @@ public class TrackerAssignment {
     public LocalDateTime getStartDate() {
         return startDate;
     }
+
+    public List<TrackerEvent> getTrackerEvents() {
+        return trackerEvents;
+    }
 }

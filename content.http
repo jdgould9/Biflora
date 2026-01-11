@@ -144,7 +144,7 @@ POST http://localhost:8080/api/trackers/1/assignments
 Content-Type: application/json
 
 {
-    "trackableId":"5"
+    "trackableId":"6"
 }
 
 ### Add a tracker assignment (invalid)
@@ -152,15 +152,15 @@ POST http://localhost:8080/api/trackers/1/assignments
 Content-Type: application/json
 
 {
-    "trackableId":"6"
+    "trackableId":"8"
 }
 
 ### Add another tracker assignment (invalid)
-POST http://localhost:8080/api/trackers/1/assignments
+POST http://localhost:8080/api/trackers/2/assignments
 Content-Type: application/json
 
 {
-    "trackableId":"2"
+    "trackableId":"1"
 }
 
 ### Get all tracker assignments
