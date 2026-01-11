@@ -11,11 +11,11 @@ import net.jdgould.spring_garden.dto.tracker.policy.TrackerPolicyCreationRespons
 import net.jdgould.spring_garden.dto.tracker.policy.TrackerPolicyGetResponseDTO;
 import net.jdgould.spring_garden.dto.tracker.policy.TrackerPolicyUpdateRequestDTO;
 import net.jdgould.spring_garden.dto.tracker.trackable.TrackableGetResponseDTO;
+import net.jdgould.spring_garden.dto.tracker.trackable.TrackableHierarchyDTO;
 import net.jdgould.spring_garden.exception.*;
-import net.jdgould.spring_garden.model.tracker.Trackable;
-import net.jdgould.spring_garden.model.tracker.TrackerAssignment;
-import net.jdgould.spring_garden.model.tracker.TrackerEvent;
-import net.jdgould.spring_garden.model.tracker.TrackerPolicy;
+import net.jdgould.spring_garden.model.gardenzone.GardenZone;
+import net.jdgould.spring_garden.model.plant.Plant;
+import net.jdgould.spring_garden.model.tracker.*;
 import net.jdgould.spring_garden.repository.TrackableRepository;
 import net.jdgould.spring_garden.repository.TrackerAssignmentRepository;
 import net.jdgould.spring_garden.repository.TrackerEventRepository;
@@ -64,6 +64,8 @@ public class TrackerService {
 
     }
 
+
+
     ///TRACKABLE
     public List<TrackableGetResponseDTO>  findAllTrackables() {
         return trackableRepository.findAll().stream()
@@ -76,6 +78,46 @@ public class TrackerService {
         return trackableEntityToGetResponseDTO(trackable);
     }
 
+    public TrackableHierarchyDTO getTrackableHierarchy(Long trackableId) {
+        Trackable trackable = findTrackableEntityById(trackableId);
+
+        Long parentId = null;
+        String parentName = null;
+        TrackableType parentType = null;
+
+        Long grandParentId = null;
+        String grandParentName = null;
+        TrackableType grandParentType = null;
+
+        if(trackable instanceof GardenZone zone){
+            parentId = zone.getGarden().getId();
+            parentName = zone.getGarden().getName();
+            parentType = zone.getGarden().getTrackableType();
+        }
+
+        if(trackable instanceof Plant plant){
+            GardenZone zone = plant.getGardenZone();
+            parentId = zone.getId();
+            parentName = zone.getName();
+            parentType = zone.getTrackableType();
+
+            grandParentId = zone.getGarden().getId();
+            grandParentName = zone.getGarden().getName();
+            grandParentType = zone.getGarden().getTrackableType();
+        }
+
+        return new TrackableHierarchyDTO(
+                trackable.getId(),
+                trackable.getName(),
+                trackable.getTrackableType(),
+                parentId,
+                parentName,
+                parentType,
+                grandParentId,
+                grandParentName,
+                grandParentType
+        );
+    }
 
     ///TRACKER POLICY
     public TrackerPolicyCreationResponseDTO addTrackerPolicy(TrackerPolicyCreationRequestDTO request) {

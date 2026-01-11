@@ -1,10 +1,175 @@
-#gardenInterface, #trackerInterface{
-    border: 3px solid;
-    padding: 10px;
-    margin: 10px;
-    text-align: center;
+/* ---------- CSS VARIABLES ---------- */
+:root {
+  --green-dark: #5f7f45;
+  --green-mid: #cfe6b8;
+  --green-light: #eef7e8;
+  --green-border: #5c7a44;
+
+  --danger: #ffb3b3;
+  --danger-text: #b00000;
+
+  --text-main: #1f2d16;
+  --text-muted: #4b5f3b;
+
+  --radius: 6px;
+  --radius-small: 4px;
 }
 
-body{
-    background-color: darkgoldenrod;
+/* ---------- GLOBAL ---------- */
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--green-light);
+  color: var(--text-main);
+}
+
+/* ---------- HEADER ---------- */
+header {
+  background: var(--green-dark);
+  color: white;
+  padding: 16px 24px;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* ---------- PAGE LAYOUT ---------- */
+.page {
+  display: grid;
+  grid-template-columns: 260px 1fr 300px;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar {
+  background: #f6fff0;
+  border: 2px solid var(--green-border);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.sidebar h3 {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-left: 16px;
+}
+
+.sidebar li {
+  margin: 4px 0;
+  cursor: pointer;
+}
+
+.sidebar li:hover {
+  text-decoration: underline;
+}
+
+.sidebar .action-btn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+/* ---------- MAIN CONTENT ---------- */
+.main {
+  background: var(--green-light);
+}
+
+/* Title */
+.main h2 {
+  margin-top: 0;
+}
+
+/* ---------- ASSIGNMENT CARD ---------- */
+.assignment {
+  background: #e8f3db;
+  border: 2px solid var(--green-border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.assignment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.assignment-title {
+  font-weight: 700;
+}
+
+.assignment-title.overdue {
+  color: var(--danger-text);
+}
+
+.assignment-meta {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.assignment-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- BUTTONS ---------- */
+button {
+  border-radius: var(--radius-small);
+  padding: 6px 10px;
+  border: 2px solid black;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button.danger {
+  background: var(--danger);
+}
+
+button.primary {
+  background: #e2f5c8;
+}
+
+/* ---------- RIGHT PANEL ---------- */
+.panel {
+  background: #f6fff0;
+  border: 2px solid var(--green-border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.panel h3 {
+  margin-top: 0;
+}
+
+.panel .stat {
+  margin-top: 10px;
+}
+
+.panel .stat.danger {
+  color: var(--danger-text);
+  font-weight: 600;
+}
+
+/* ---------- ATTACH BUTTON ---------- */
+.attach-btn {
+  margin-top: 8px;
+}
+
+/* ---------- SMALL TEXT ---------- */
+.small {
+  font-size: 0.9rem;
 }

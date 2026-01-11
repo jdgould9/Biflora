@@ -52,4 +52,8 @@ public class GardenZone extends Trackable {
     public TrackableType getTrackableType() {
         return TrackableType.GARDENZONE;
     }
+
+    public Garden getGarden() {
+        return garden;
+    }
 }

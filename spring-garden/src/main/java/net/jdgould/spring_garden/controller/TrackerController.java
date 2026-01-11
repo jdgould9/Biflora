@@ -11,6 +11,7 @@ import net.jdgould.spring_garden.dto.tracker.policy.TrackerPolicyCreationRespons
 import net.jdgould.spring_garden.dto.tracker.policy.TrackerPolicyGetResponseDTO;
 import net.jdgould.spring_garden.dto.tracker.policy.TrackerPolicyUpdateRequestDTO;
 import net.jdgould.spring_garden.dto.tracker.trackable.TrackableGetResponseDTO;
+import net.jdgould.spring_garden.dto.tracker.trackable.TrackableHierarchyDTO;
 import net.jdgould.spring_garden.service.TrackerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,11 @@ public class TrackerController {
     public TrackableGetResponseDTO getTrackableById(@PathVariable("trackableId") Long trackableId){
         return trackerService.findTrackableById(trackableId);
 
+    }
+
+    @GetMapping("/trackables/{trackableId}/hierarchy")
+    public TrackableHierarchyDTO getTrackableHierarchy(@PathVariable("trackableId") Long trackableId) {
+        return trackerService.getTrackableHierarchy(trackableId);
     }
 
     /// TRACKER POLICY

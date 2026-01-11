@@ -1,4 +1,6 @@
-//-----CLASSES-----
+// =====================
+// CLASSES
+// =====================
 class Garden {
   constructor(id, name) {
     this.id = id;
@@ -11,14 +13,14 @@ class GardenZone {
   constructor(id, name) {
     this.id = id;
     this.name = name;
-    this.plants = []
+    this.plants = [];
   }
 }
 
-class Plant{
-  constructor(id, name){
-    this.id=id;
-    this.name=name;
+class Plant {
+  constructor(id, name) {
+    this.id = id;
+    this.name = name;
   }
 }
 
@@ -33,28 +35,32 @@ class TrackerPolicy {
   }
 }
 
-class TrackerAssignment{
-  constructor(id, assignedToId, startDate){
-    this.id=id;
-    this.assignedToId=assignedToId;
-    this.startDate=startDate;
-    this.events=[];
+class TrackerAssignment {
+  constructor(id, assignedToId, startDate) {
+    this.id = id;
+    this.assignedToId = assignedToId;
+    this.startDate = startDate;
+    this.events = [];
   }
 }
 
-class TrackerEvent{
-  constructor(id, recordedTime, details){
-    this.id=id;
-    this.recordedTime=recordedTime;
-    this.details=details;
+class TrackerEvent {
+  constructor(id, recordedTime, details) {
+    this.id = id;
+    this.recordedTime = recordedTime;
+    this.details = details;
   }
 }
 
-//-----MODEL GLOBALS-----
+// =====================
+// GLOBAL STATE
+// =====================
 let gardens = [];
 let trackerPolicies = [];
 
-//-----INITIALIZATION-----
+// =====================
+// INITIALIZATION
+// =====================
 init();
 
 async function init() {
@@ -63,839 +69,407 @@ async function init() {
   populateNav();
 }
 
-//Fetch initial info
+// =====================
+// FETCHING
+// =====================
 async function fetchInitialInfo() {
-  //Fetch all gardens + gardenzones inside gardens
   try {
     const gardenResponse = await fetch("http://localhost:8080/api/gardens");
-    if (!gardenResponse.ok) {
-      throw new Error("Could not fetch garden information");
-    }
+    if (!gardenResponse.ok) throw new Error("Could not fetch gardens");
     const gardenJson = await gardenResponse.json();
 
-    const trackerPolicyResponse = await fetch(
-      "http://localhost:8080/api/trackers"
-    );
-    if (!trackerPolicyResponse.ok) {
-      throw new Error("Could not fetch tracker policy information");
-    }
-    const trackerPolicyJson = await trackerPolicyResponse.json();
+    const trackerResponse = await fetch("http://localhost:8080/api/trackers");
+    if (!trackerResponse.ok) throw new Error("Could not fetch trackers");
+    const trackerJson = await trackerResponse.json();
 
-    console.log(gardenJson);
-    console.log(trackerPolicyJson);
-    return [gardenJson, trackerPolicyJson];
+    return [gardenJson, trackerJson];
   } catch (error) {
     console.error(error.message);
   }
 }
 
-//Build model
-function buildModel(initialInfo) {
-  //Build gardens + gardenzones + plants
-  const gardenJson = initialInfo[0];
+// =====================
+// MODEL BUILDING
+// =====================
+function buildModel([gardenJson, trackerPolicyJson]) {
   for (const garden of gardenJson) {
     const newGarden = gardenMapper(garden);
-    for (const gardenZone of garden["gardenZones"]) {
-      const newGardenZone = gardenZoneMapper(gardenZone);
-      for(const plant of gardenZone["plants"]){
-        const newPlant = plantMapper(plant);
-        newGardenZone.plants.push(newPlant);
+
+    for (const zone of garden.gardenZones) {
+      const newZone = gardenZoneMapper(zone);
+
+      for (const plant of zone.plants) {
+        newZone.plants.push(plantMapper(plant));
       }
-      newGarden.gardenZones.push(newGardenZone);
+
+      newGarden.gardenZones.push(newZone);
     }
+
     gardens.push(newGarden);
   }
 
-  //Build tracker policies
-  const trackerPolicyJson = initialInfo[1];
-  for (const trackerPolicy of trackerPolicyJson) {
-    const newTrackerPolicy = trackerPolicyMapper(trackerPolicy);
-    for(const trackerAssignment of trackerPolicy["assignments"]){
-      const newTrackerAssignment = trackerAssignmentMapper(trackerAssignment);
-      for(const trackerEvent of trackerAssignment["events"]){
-        const newTrackerEvent = trackerEventMapper(trackerEvent);
-        newTrackerAssignment.events.push(newTrackerEvent);
+  for (const policy of trackerPolicyJson) {
+    const newPolicy = trackerPolicyMapper(policy);
+
+    for (const assignment of policy.assignments) {
+      const newAssignment = trackerAssignmentMapper(assignment);
+
+      for (const event of assignment.events) {
+        newAssignment.events.push(trackerEventMapper(event));
       }
-      newTrackerPolicy.assignments.push(newTrackerAssignment);
+
+      newPolicy.assignments.push(newAssignment);
     }
-    trackerPolicies.push(newTrackerPolicy);
+
+    trackerPolicies.push(newPolicy);
   }
 }
 
-//Populate navigation bar
+// =====================
+// DOM REFERENCES
+// =====================
+const managingHeader = document.querySelector("#managingheader");
+const interiorDetailsHeader = document.querySelector("#interiordetailsheader");
+const interiorDetailsList = document.querySelector("#interiordetailslist");
+const assignmentDetailsHeader = document.querySelector(
+  "#assignmentdetailsheader"
+);
+const assignmentDetailsList = document.querySelector("#assignmentdetailslist");
+const selectedDetailsHeader = document.querySelector("#selecteddetailsheader");
+const selectedDetailsList = document.querySelector("#selecteddetailslist");
+
+// =====================
+// UTILITIES
+// =====================
+function clearMainInnerHtml() {
+  managingHeader.textContent = "";
+  interiorDetailsHeader.textContent = "";
+  interiorDetailsList.innerHTML = "";
+  assignmentDetailsHeader.textContent = "";
+  assignmentDetailsList.innerHTML = "";
+  selectedDetailsHeader.textContent = "";
+  selectedDetailsList.innerHTML = "";
+}
+
+// =====================
+// NAVIGATION
+// =====================
 function populateNav() {
-  //Populate gardens + gardenzones nav
   const gardensNavList = document.querySelector("#gardennavlist");
   gardensNavList.innerHTML = "";
 
   for (const garden of gardens) {
-    const gardenLi = document.createElement("li");
-    gardenLi.dataset.id = garden.id;
-    gardenLi.dataset.type = "GARDEN";
-    gardenLi.textContent = garden.name;
-    gardenLi.addEventListener("click", clickNavItem);
+    const gardenLi = createNavItem(garden.name, garden.id, "GARDEN");
     gardensNavList.appendChild(gardenLi);
 
-    const gardenZoneUl = document.createElement("ul");
-    for (const gardenZone of garden.gardenZones) {
-      const gardenZoneLi = document.createElement("li");
-      gardenZoneLi.dataset.id = gardenZone.id;
-      gardenZoneLi.dataset.type = "GARDENZONE";
-      gardenZoneLi.textContent = gardenZone.name;
-      gardenZoneLi.addEventListener("click", clickNavItem);
-      gardenZoneUl.appendChild(gardenZoneLi);
+    const zoneUl = document.createElement("ul");
+    for (const zone of garden.gardenZones) {
+      const zoneLi = createNavItem(zone.name, zone.id, "GARDENZONE");
+      zoneLi.dataset.parentGardenId = garden.id;
+      zoneUl.appendChild(zoneLi);
     }
-    gardensNavList.appendChild(gardenZoneUl);
+    gardensNavList.appendChild(zoneUl);
   }
 
-  //Populate tracker policies nav
-  const gardenTrackerPolicyNavList = document.querySelector(
-    "#gardentrackerpolicynavlist"
-  );
-  gardenTrackerPolicyNavList.innerHTML = "";
-  const gardenZoneTrackerPolicyNavList = document.querySelector(
-    "#gardenzonetrackerpolicynavlist"
-  );
-  gardenZoneTrackerPolicyNavList.innerHTML = "";
-  const plantTrackerPolicyNavList = document.querySelector(
-    "#planttrackerpolicynavlist"
-  );
-  plantTrackerPolicyNavList.innerHTML = "";
+  populateTrackerNav();
+}
 
-  for (const trackerPolicy of trackerPolicies) {
-    const trackerPolicyLi = document.createElement("li");
-    trackerPolicyLi.dataset.id = trackerPolicy.id;
-    trackerPolicyLi.dataset.type = "TRACKERPOLICY";
-    trackerPolicyLi.textContent = trackerPolicy.name;
-    trackerPolicyLi.addEventListener("click", clickNavItem);
+function populateTrackerNav() {
+  const lists = {
+    GARDEN: document.querySelector("#gardentrackerpolicynavlist"),
+    GARDENZONE: document.querySelector("#gardenzonetrackerpolicynavlist"),
+    PLANT: document.querySelector("#planttrackerpolicynavlist"),
+  };
 
-    let listToAddTo;
-    switch (trackerPolicy.targetType) {
-      case "GARDEN":
-        listToAddTo = gardenTrackerPolicyNavList;
-        break;
-      case "GARDENZONE":
-        listToAddTo = gardenZoneTrackerPolicyNavList;
-        break;
-      case "PLANT":
-        listToAddTo = plantTrackerPolicyNavList;
-        break;
-    }
-    listToAddTo.appendChild(trackerPolicyLi);
+  Object.values(lists).forEach((ul) => (ul.innerHTML = ""));
+
+  for (const policy of trackerPolicies) {
+    const li = createNavItem(policy.name, policy.id, "TRACKERPOLICY");
+    lists[policy.targetType].appendChild(li);
   }
 }
 
-//-----EVENT LISTENERS-----
-//Nav
+function createNavItem(text, id, type) {
+  const li = document.createElement("li");
+  li.textContent = text;
+  li.dataset.id = id;
+  li.dataset.type = type;
+  li.addEventListener("click", clickNavItem);
+  return li;
+}
+
+// =====================
+// NAV HANDLER
+// =====================
 function clickNavItem(event) {
+  clearMainInnerHtml();
+
   switch (event.target.dataset.type) {
     case "GARDEN":
-      displayGardenInfo(event);
+      displayGardenInfo(gardens.find((g) => g.id == event.target.dataset.id));
       break;
+
     case "GARDENZONE":
-      displayGardenZoneInfo(event);
+      const garden = gardens.find(
+        (g) => g.id == event.target.dataset.parentGardenId
+      );
+      displayGardenZoneInfo(
+        garden.gardenZones.find((z) => z.id == event.target.dataset.id)
+      );
       break;
+
     case "TRACKERPOLICY":
-      displayTrackerPolicyInfo(event);
+      displayTrackerPolicyInfo(
+        trackerPolicies.find((p) => p.id == event.target.dataset.id)
+      );
       break;
-
-      async function displayGardenInfo(event) {
-        // const garden = gardens.find((garden)=>garden.id==event.target.dataset.id);
-        // fetchPlantInfo(garden);
-        console.log(garden.gardenZones);
-      }
-      function displayGardenZoneInfo(event) {
-        console.log(event.target);
-      }
-      function displayTrackerPolicyInfo(event) {
-        console.log(event.target);
-      }
   }
 }
 
-// async function fetchPlantInfo(garden){
-//   for(const gardenZone of garden.gardenZones){
-//     gardenZone.plants=[];
-//     try{
-//       const plantResponse = await fetch(`http://localhost:8080/api/gardens/${garden.id}/zones/${gardenZone.id}/plants`);
-//       if(!plantResponse.ok){
-//         throw new Error(`Could not fetch plant info for garden zone: ${gardenZone}`);
-//       }
-//       const plantJson = await plantResponse.json();
-//       for(const plant of plantJson){
-//         const newPlant = plantMapper(plant);
-//         gardenZone.plants.push(newPlant);
-//       }
-//     }
-//     catch(error){
-//       console.error(error.message);
-//     }
-//   }
-// }
+// =====================
+// DISPLAY FUNCTIONS
+// =====================
+function displayGardenInfo(garden) {
+  managingHeader.textContent = `Managing garden: ${garden.name}`;
+  interiorDetailsHeader.textContent = "Zones:";
+  selectedDetailsHeader.textContent = "Garden details:";
 
-const createGardenBtn = document.querySelector("#creategarden");
-createGardenBtn.addEventListener("click", clickCreateGarden);
-async function clickCreateGarden() {
-  const newGardenName = prompt("New garden name:");
+  for (const zone of garden.gardenZones) {
+    const div = document.createElement("div");
 
-  try {
-    const gardenResponse = await fetch("http://localhost:8080/api/gardens", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        gardenName: newGardenName,
-      }),
-    });
-
-    if (!gardenResponse.ok) {
-      throw new Error(`Response status: ${gardenResponse.status}`);
-    }
-
-    const newGardenResponse = await gardenResponse.json();
-    gardens.push(new Garden(newGardenResponse["gardenId"], newGardenName));
-
-    populateNav();
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
-const createTrackerPolicyBtn = document.querySelector("#createtrackerpolicy");
-createTrackerPolicyBtn.addEventListener("click", clickCreateTrackerPolicy);
-async function clickCreateTrackerPolicy() {
-  const newTrackerPolicyName = prompt("New tracker policy name:");
-  const newTrackerPolicyDescription = prompt("New tracker policy description:");
-  const newTrackerPolicyTargetType = prompt(
-    "New tracker policy target (GARDEN, GARDENZONE, PLANT):"
-  );
-  const newTrackerPolicyIntervalHours = prompt("Interval (hours):");
-
-  try {
-    const trackerResponse = await fetch("http://localhost:8080/api/trackers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        trackerName: newTrackerPolicyName,
-        trackerDescription: newTrackerPolicyDescription,
-        targetType: newTrackerPolicyTargetType,
-        intervalHours: newTrackerPolicyIntervalHours,
-      }),
-    });
-
-    if (!trackerResponse.ok) {
-      throw new Error(`Response status: ${trackerResponse.status}`);
-    }
-
-    const newTrackerResponse = await trackerResponse.json();
-
-    trackerPolicies.push(
-      new TrackerPolicy(
-        newTrackerResponse["trackerPolicyId"],
-        newTrackerPolicyName,
-        newTrackerPolicyDescription,
-        newTrackerPolicyTargetType,
-        newTrackerPolicyIntervalHours
-      )
+    div.appendChild(
+      Object.assign(document.createElement("p"), {
+        textContent: zone.name,
+      })
     );
 
-    populateNav();
-  } catch (error) {
-    console.error(error.message);
+    const viewBtn = document.createElement("button");
+    viewBtn.textContent = "View zone";
+    viewBtn.onclick = () => {
+      clearMainInnerHtml();
+      displayGardenZoneInfo(zone);
+    };
+
+    selectedDetailsList.innerHTML = `
+    <p>${garden.name}</p>
+    <p>${garden.gardenZones.length} zones</p>
+  `;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete zone";
+    deleteBtn.onclick = () => {
+      const deleteConfirm = confirm(
+        "Are you sure you want to delete this zone?"
+      );
+      if (deleteConfirm) {
+        const newZones = garden.gardenZones.filter((z) => z != zone);
+        garden.gardenZones = newZones;
+        populateNav();
+        div.remove();
+        selectedDetailsList.innerHTML = `
+    <p>${garden.name}</p>
+    <p>${garden.gardenZones.length} zones</p>
+  `;
+      }
+      deleteZoneFetch(zone);
+    };
+
+    div.appendChild(viewBtn);
+    div.appendChild(deleteBtn);
+    interiorDetailsList.appendChild(div);
   }
 }
 
-//-----Information populating-----
-//Aside
-function clickEditDetails() {
-  //Edit management entity details
-}
-function clickDeleteDetails() {
-  //Delete management entity
+async function deleteZoneFetch(zoneId) {
+  try {
+    const res = await fetch(
+      `http://localhost:8080/api/gardenzones/${zoneId}`,
+      { method: "DELETE" }
+    );
+
+    if (!res.ok) throw new Error("Failed to delete zone");
+  } catch (err) {
+    console.error(err.message);
+  }
 }
 
-//-----MAPPERS-----
-function gardenMapper(gardenJson) {
-  return new Garden(gardenJson["gardenId"], gardenJson["gardenName"]);
+
+function displayGardenZoneInfo(zone) {
+  managingHeader.textContent = `Managing garden zone: ${zone.name}`;
+  interiorDetailsHeader.textContent = "Plants:";
+  selectedDetailsHeader.textContent = "Zone details:";
+
+  for (const plant of zone.plants) {
+    const div = document.createElement("div");
+
+    div.appendChild(
+      Object.assign(document.createElement("p"), {
+        textContent: plant.name,
+      })
+    );
+
+    const viewBtn = document.createElement("button");
+    viewBtn.textContent = "View plant";
+    viewBtn.onclick = () => {
+      clearMainInnerHtml();
+      displayPlantInfo(plant);
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete plant";
+    deleteBtn.onclick = () => {
+      const deleteConfirm = confirm(
+        "Are you sure you want to delete this plant?"
+      );
+      if (deleteConfirm) {
+        const newPlants = zone.plants.filter((p) => p != plant);
+        zone.plants = newPlants;
+        populateNav();
+        div.remove();
+        selectedDetailsList.innerHTML = `
+    <p>${zone.name}</p>
+    <p>${zone.plants.length} plants</p>
+  `;
+      }
+      deletePlantFetch();
+    };
+
+    div.appendChild(viewBtn);
+    div.appendChild(deleteBtn);
+    interiorDetailsList.appendChild(div);
+  }
+
+  selectedDetailsList.innerHTML = `
+    <p>${zone.name}</p>
+    <p>${zone.plants.length} plants</p>
+  `;
+
+  const editDetailsBtn = document.querySelector("#editdetails");
+  editDetailsBtn.onclick = () =>{
+    const deleteConfirm = confirm(
+        "Are you sure you want to delete this zone?"
+      );
+
+  }
+
+  const deleteItemBtn = document.querySelector("#deleteitem");
 }
 
-function gardenZoneMapper(gardenZoneJson) {
-  return new GardenZone(
-    gardenZoneJson["gardenZoneId"],
-    gardenZoneJson["gardenZoneName"]
+function deletePlantFetch() {}
+
+async function displayTrackerPolicyInfo(policy) {
+  managingHeader.textContent = `Managing tracker: ${policy.name}`;
+  assignmentDetailsHeader.textContent = "Assignments:";
+  selectedDetailsHeader.textContent = "Policy details:";
+
+  for (const assignment of policy.assignments) {
+    const hierarchy = await getHierarchy(assignment.assignedToId);
+    const div = document.createElement("div");
+
+    div.appendChild(
+      Object.assign(document.createElement("p"), {
+        textContent: hierarchy.name,
+      })
+    );
+
+    const viewBtn = document.createElement("button");
+    viewBtn.textContent = "View";
+    viewBtn.onclick = () => clickViewAssignment(assignment, hierarchy);
+
+    div.appendChild(viewBtn);
+    assignmentDetailsList.appendChild(div);
+  }
+
+  selectedDetailsList.innerHTML = `
+    <p>${policy.name}</p>
+    <p>${policy.description}</p>
+    <p>${policy.assignments.length} assignments</p>
+  `;
+}
+
+function displayPlantInfo(plant) {
+  managingHeader.textContent = `Managing plant: ${plant.name}`;
+  selectedDetailsHeader.textContent = "Plant details:";
+  selectedDetailsList.innerHTML = `<p>${plant.name}</p>`;
+}
+
+// =====================
+// HIERARCHY
+// =====================
+async function getHierarchy(id) {
+  const res = await fetch(
+    `http://localhost:8080/api/trackers/trackables/${id}/hierarchy`
   );
+  return res.json();
 }
 
-function plantMapper(plantJson){
-  return new Plant(
-    plantJson["plantId"],
-    plantJson["plantName"]
+function clickViewAssignment(_, hierarchy) {
+  clearMainInnerHtml();
+
+  switch (hierarchy.type) {
+    case "GARDEN": {
+      const garden = gardens.find((g) => g.id == hierarchy.id);
+      if (!garden) return;
+      displayGardenInfo(garden);
+      break;
+    }
+
+    case "GARDENZONE": {
+      const parentGarden = gardens.find((g) => g.id == hierarchy.parentId);
+      if (!parentGarden) return;
+
+      const gardenZone = parentGarden.gardenZones.find(
+        (z) => z.id == hierarchy.id
+      );
+      if (!gardenZone) return;
+
+      displayGardenZoneInfo(gardenZone);
+      break;
+    }
+
+    case "PLANT": {
+      const grandParentGarden = gardens.find(
+        (g) => g.id == hierarchy.grandParentId
+      );
+      if (!grandParentGarden) return;
+
+      const parentZone = grandParentGarden.gardenZones.find(
+        (z) => z.id == hierarchy.parentId
+      );
+      if (!parentZone) return;
+
+      const plant = parentZone.plants.find((p) => p.id == hierarchy.id);
+      if (!plant) return;
+
+      displayPlantInfo(plant);
+      break;
+    }
+
+    default:
+      console.warn("Unknown hierarchy type:", hierarchy.type);
+  }
+}
+
+// =====================
+// MAPPERS
+// =====================
+const gardenMapper = (g) => new Garden(g.gardenId, g.gardenName);
+const gardenZoneMapper = (z) =>
+  new GardenZone(z.gardenZoneId, z.gardenZoneName);
+const plantMapper = (p) => new Plant(p.plantId, p.plantName);
+const trackerPolicyMapper = (t) =>
+  new TrackerPolicy(
+    t.trackerPolicyId,
+    t.name,
+    t.description,
+    t.targetType,
+    t.intervalHours
   );
-}
-
-function trackerPolicyMapper(trackerPolicyJson) {
-  return new TrackerPolicy(
-    trackerPolicyJson["trackerPolicyId"],
-    trackerPolicyJson["name"],
-    trackerPolicyJson["description"],
-    trackerPolicyJson["targetType"],
-    trackerPolicyJson["intervalHours"]
+const trackerAssignmentMapper = (a) =>
+  new TrackerAssignment(
+    a.trackerAssignmentId,
+    a.trackableAssignedToId,
+    a.startDate
   );
-}
-
-function trackerAssignmentMapper(trackerAssignmentJson){
-  return new TrackerAssignment(
-    trackerAssignmentJson["trackerAssignmentId"],
-    trackerAssignmentJson["trackableAssignedToId"],
-    trackerAssignmentJson["startDate"]
-  );
-}
-
-function trackerEventMapper(trackerEventJson){
-  return new TrackerEvent(
-    trackerEventJson["trackerEventId"],
-    trackerEventJson["recordedTime"],
-    trackerEventJson["details"]
-  );
-}
-
-// //-----GARDEN CREATION-----
-// async function createNewGarden() {
-//   console.log("Creating new garden");
-//   //TODO: Change to center window pop, rest of screen vignettes
-//   const newGardenName = prompt("New garden name:");
-//   console.log(newGardenName);
-
-//   try {
-//     const gardenResponse = await fetch("http://localhost:8080/api/gardens", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         gardenName: newGardenName,
-//       }),
-//     });
-
-//     if (!gardenResponse.ok) {
-//       throw new Error(`Response status: ${gardenResponse.status}`);
-//     }
-
-//     const newGarden = await gardenResponse.json();
-
-//     gardens.push(new Garden(newGarden["gardenId"], newGardenName));
-//     console.log(gardens.at(-1));
-//     populateNavBar();
-//   } catch (error) {
-//     console.error(error.message);
-//   }
-// }
-
-//--TRACKER CREATION
-// async function createNewTracker(){
-//     console.log("Creating new tracker");
-
-//     const newTrackerName=prompt("New tracker name:");
-//     const newTrackerDescription=prompt("New tracker description");
-//     const newTrackerTargetType=prompt("New tracker target type (GARDEN GARDENZONE PLANT)");
-//     const newTrackerIntervalHours=prompt("New tracker interval (hours)");
-
-//     try{
-//         const trackerResponse = await fetch("http://localhost:8080/api/trackers",{
-//             method:"POST",
-//             headers:{
-//                 "Content-Type":"application/json"
-//             },
-//             body: JSON.stringify({
-//                 "trackerName":newTrackerName,
-//                 "trackerDescription":newTrackerDescription,
-//                 "targetType":newTrackerTargetType,
-//                 "intervalHours":newTrackerIntervalHours
-//             })
-//         })
-
-//         if(!trackerResponse.ok){
-//             throw new Error(`Response status: ${trackerResponse.status}`)
-//         }
-
-//         const newTracker = await trackerResponse.json();
-
-//         trackerPolicies.push(new TrackerPolicy(newTracker["trackerPolicyId"],
-//             newTrackerName,
-//             newTrackerDescription,
-//             newTrackerTargetType,
-//             newTrackerIntervalHours
-//         ));
-//         console.log(trackerPolicies.at(-1));
-//         populateNavBar();
-//     }
-//     catch(error){
-//         console.error(error.message);
-//     }
-// }
-
-// //--CLASS DECLARATIONS--
-// class Garden{
-//     constructor(gardenId, gardenName){
-//         this.gardenId=gardenId;
-//         this.gardenName=gardenName;
-//         this.gardenZones=[]
-//     }
-// }
-
-// class GardenZone{
-//     constructor(gardenZoneId, gardenZoneName){
-//         this.gardenZoneId = gardenZoneId;
-//         this.gardenZoneName=gardenZoneName;
-//         this.plants=[]
-//     }
-// }
-
-// class Plant{
-//     constructor(plantId, plantName){
-//         this.plantId=plantId;
-//         this.plantName=plantName;
-//     }
-// }
-
-// class TrackerPolicy{
-//     constructor(trackerPolicyId, trackerPolicyName, trackerPolicyDescription,
-//         trackerPolicyTargetType, trackerPolicyInterval){
-//             this.trackerPolicyId=trackerPolicyId;
-//             this.trackerPolicyName=trackerPolicyName;
-//             this.trackerPolicyDescription=trackerPolicyDescription;
-//             this.trackerPolicyTargetType=trackerPolicyTargetType;
-//             this.trackerPolicyInterval=trackerPolicyInterval;
-//             this.trackerPolicyAssignments=[];
-//         }
-// }
-
-// //--GLOBAL VARIABLES--
-// let gardens=[];
-// let trackerPolicies=[];
-
-// const createGardenBtn = document.querySelector("#createGarden");
-// createGardenBtn.addEventListener("click", createNewGarden);
-// const createTrackerBtn = document.querySelector("#createTracker");
-// createTrackerBtn.addEventListener("click", createNewTracker);
-
-// const gardensNavList = document.querySelector("#gardensNavList");
-// gardensNavList.addEventListener("click", navListSelector);
-
-// const trackersNavList = document.querySelector("#trackersNavList");
-// trackersNavList.addEventListener("click", navListSelector)
-
-// function findGardenById(id){
-//     return gardens.find((garden)=>garden.gardenId==id);
-// }
-// function findGardenZoneById(gardenId, gardenZoneId){
-//     const garden = findGardenById(gardenId);
-//     return garden.gardenZones.find((gardenZone)=>gardenZone.gardenZoneId==gardenZoneId);
-// }
-// function findTrackerById(id){
-//     return trackerPolicies.find((tracker)=>tracker.trackerPolicyId==id);
-// }
-
-// //--NAV LIST SELECTION--
-// function navListSelector(e){
-//     if(e.target.hasAttribute("gardenid")){
-//         displayGardenInfo(findGardenById(e.target.getAttribute("gardenid")));
-//     }
-//     else if(e.target.hasAttribute("gardenzoneid")){
-//         const gardenZoneId = e.target.getAttribute("gardenzoneid");
-//         const gardenId = e.target.parentNode.parentNode.getAttribute("gardenid");
-//         displayGardenZoneInfo(findGardenZoneById(gardenId, gardenZoneId));
-
-//     }
-//     else if(e.target.hasAttribute("trackerid")){
-//         displayTrackerInfo(findTrackerById(e.target.getAttribute("trackerid")));
-//     }
-// }
-
-// const managingHeader = document.querySelector("#managingheader");
-// const interiorDetailsHeader = document.querySelector("#interiordetailsheader");
-// const interiorDetailsList = document.querySelector("#interiordetailslist");
-// const assignmentDetailsHeader = document.querySelector("#assignmentdetailsheader");
-
-// const selectedDetailsHeader = document.querySelector("#selecteddetailsheader");
-// const selectedDetailsList = document.querySelector("#selecteddetailslist");
-
-// function sumOfPlantsInGarden(garden){
-//     return 999;
-// }
-
-// //--DISPLAY SELECTED NAV INFO--
-// function displayGardenInfo(garden){
-//     interiorDetailsList.innerHTML="";
-//     selectedDetailsList.innerHTML="";
-//     console.log("Displaying garden info for: ", garden);
-//     managingHeader.textContent=`Managing garden: ${garden.gardenName}`
-//     const interiorDetailsHeader = document.querySelector("#interiordetailsheader");
-//     interiorDetailsHeader.textContent="Zones";
-//     selectedDetailsHeader.textContent="Garden details";
-//     assignmentDetailsHeader.textContent="Attached trackers";
-//     interiorDetailsHeader.display="none";
-
-//     //zones
-//     const gardenZones = garden.gardenZones;
-//     for(const gardenZone of gardenZones){
-//         const gardenZoneLi = document.createElement("li");
-//         gardenZoneLi.textContent=gardenZone.gardenZoneName;
-//         interiorDetailsList.appendChild(gardenZoneLi);
-//     }
-
-//     //attached trackers
-
-//     //selected details
-//     const selectedName = document.createElement("li");
-//     selectedName.textContent=`Name: ${garden.gardenName}`;
-//     selectedDetailsList.appendChild(selectedName);
-
-//     const selectedNumZones = document.createElement("li");
-//     selectedNumZones.textContent=`# zones: ${garden.gardenZones.length}`;
-//     selectedDetailsList.appendChild(selectedNumZones);
-
-//     const selectedNumPlants = document.createElement("li");
-//     selectedNumPlants.textContent=`# plants: ${sumOfPlantsInGarden(garden)}`;
-//     selectedDetailsList.appendChild(selectedNumPlants);
-
-// }
-
-// function displayGardenZoneInfo(gardenZone){
-//     interiorDetailsList.innerHTML="";
-//     selectedDetailsList.innerHTML="";
-//     console.log("Displaying zone info for: ", gardenZone);
-//     managingHeader.textContent=`Managing zone: ${gardenZone.gardenZoneName}`
-//     interiorDetailsHeader.textContent="Plants";
-//     selectedDetailsHeader.textContent="Zone details";
-//     assignmentDetailsHeader.textContent="Attached trackers";
-//     interiorDetailsHeader.display="none";
-//     const plants = gardenZone.plants;
-//     for(const plant of plants){
-//         const plantLi = document.createElement("li");
-//         plantLi.textContent=plant.plantName;
-//         interiorDetailsList.appendChild(plantLi);
-//     }
-
-//     //selected details
-//     const selectedName = document.createElement("li");
-//     selectedName.textContent=`Name: ${gardenZone.gardenZoneName}`;
-//     selectedDetailsList.appendChild(selectedName);
-
-//     const selectedNumPlants = document.createElement("li");
-//     selectedNumPlants.textContent=`# plants: ${gardenZone.plants.length}`;
-//     selectedDetailsList.appendChild(selectedNumPlants);
-
-// }
-
-// function displayPlantInfo(plant){
-
-// }
-
-// function displayTrackerInfo(tracker){
-//     interiorDetailsList.innerHTML="";
-//     selectedDetailsList.innerHTML="";
-//     console.log("Displaying tracker info for: ", tracker);
-//     managingHeader.textContent=`Managing tracker: ${tracker.trackerPolicyName}`
-//     selectedDetailsHeader.textContent="Tracker details";
-//     assignmentDetailsHeader.textContent="Assigned to";
-//     interiorDetailsHeader.textContent="";
-
-//     const selectedName = document.createElement("li");
-//     selectedName.textContent=`Name: ${tracker.trackerPolicyName}`;
-//     selectedDetailsList.appendChild(selectedName);
-
-//     const selectedDescription = document.createElement("li");
-//     selectedDescription.textContent=`Description: ${tracker.trackerPolicyDescription}`;
-//     selectedDetailsList.appendChild(selectedDescription);
-
-//     const selectedInterval = document.createElement("li");
-//     selectedInterval.textContent=`Interval: ${tracker.trackerPolicyInterval} hours`;
-//     selectedDetailsList.appendChild(selectedInterval);
-// }
-
-// //--INITIALIZATION--
-// //Fetches all gardens and tracker policies
-// async function fetchInitialInfo(){
-//     try{
-//         const gardenResponse = await fetch("http://localhost:8080/api/gardens");
-//         if(!gardenResponse.ok){
-//             throw new Error("Could not fetch gardens info");
-//         }
-//         const trackerPolicyResponse = await fetch("http://localhost:8080/api/trackers");
-//         if(!trackerPolicyResponse.ok){
-//             throw new Error("Could not fetch tracker policy info");
-//         }
-
-//         const gardenJson=await gardenResponse.json();
-//         const trackerPoliciesJson= await trackerPolicyResponse.json();
-
-//         return [gardenJson, trackerPoliciesJson];
-//     }
-//     catch(error){
-//         console.error(error.message);
-//     }
-// }
-
-// //Populates gardens and tracker policies
-// function populateInitialInfo(gardensJson, trackerPoliciesJson){
-//     //Garden + zone info
-//     for(const gardenJson of gardensJson){
-//         const newGarden = gardenJsonToObject(gardenJson);
-//         for(const gardenZone of gardenJson["gardenZones"]){
-//             const newGardenZone=gardenZoneJsonToObject(gardenZone);
-//             newGarden.gardenZones.push(newGardenZone);
-//         }
-//         gardens.push(newGarden);
-//     }
-
-//     //Policy info
-//     for(const trackerPolicyJson of trackerPoliciesJson){
-//         const newTrackerPolicy = trackerPolicyJsonToObject(trackerPolicyJson);
-//         trackerPolicies.push(newTrackerPolicy);
-//     }
-// }
-
-// //Populates nav bar from garden and tracker policy global variables
-// function populateNavBar(){
-//     const gardensNavList = document.querySelector("#gardensNavList");
-//     gardensNavList.innerHTML="";
-
-//     for (const garden of gardens) {
-//         const gardenLi = document.createElement("li");
-//         gardenLi.setAttribute("gardenId", garden.gardenId)
-//         gardenLi.textContent = garden.gardenName;
-
-//         const zonesUl = document.createElement("ul");
-
-//         for (const gardenZone of garden.gardenZones) {
-//             const zoneLi = document.createElement("li");
-//             zoneLi.setAttribute("gardenZoneId", gardenZone.gardenZoneId);
-//             zoneLi.textContent = gardenZone.gardenZoneName;
-//             zonesUl.appendChild(zoneLi);
-//         }
-
-//         gardenLi.appendChild(zonesUl);   // nest zones under garden
-//         gardensNavList.appendChild(gardenLi);
-//     }
-
-//     const trackersNavList=document.querySelector("#trackersNavList");
-//     trackersNavList.innerHTML="";
-
-//     //garden
-//     const gardenTrackers = trackerPolicies.filter((tracker)=>tracker.trackerPolicyTargetType=="GARDEN");
-//     const gardenTrackerTitleLi = document.createElement("li");
-//     gardenTrackerTitleLi.textContent="Garden";
-//     trackersNavList.appendChild(gardenTrackerTitleLi);
-
-//     const gardenTrackerUl = document.createElement("ul");
-//     trackersNavList.appendChild(gardenTrackerUl);
-//     for(const gardenTracker of gardenTrackers){
-//         const gardenTrackerLi = document.createElement("li");
-//         gardenTrackerLi.setAttribute("trackerId", gardenTracker.trackerPolicyId)
-//         gardenTrackerLi.textContent=gardenTracker.trackerPolicyName;
-//         gardenTrackerUl.appendChild(gardenTrackerLi);
-//     }
-
-//     //zone
-//     const gardenZoneTrackers = trackerPolicies.filter((tracker)=>tracker.trackerPolicyTargetType=="GARDENZONE");
-//     const gardenZoneTrackerTitleLi = document.createElement("li");
-//     gardenZoneTrackerTitleLi.textContent="Garden zone";
-//     trackersNavList.appendChild(gardenZoneTrackerTitleLi);
-
-//     const gardenZoneTrackerUl = document.createElement("ul");
-//     trackersNavList.appendChild(gardenZoneTrackerUl);
-//     for(const gardenZoneTracker of gardenZoneTrackers){
-//         const gardenZoneTrackerLi = document.createElement("li");
-//         gardenZoneTrackerLi.setAttribute("trackerId", gardenZoneTracker.trackerPolicyId)
-//         gardenZoneTrackerLi.textContent=gardenZoneTracker.trackerPolicyName;
-//         gardenZoneTrackerUl.appendChild(gardenZoneTrackerLi);
-//     }
-
-//     //plant
-//     const plantTrackers = trackerPolicies.filter((tracker)=>tracker.trackerPolicyTargetType=="PLANT");
-//     const plantTrackerTitleLi = document.createElement("li");
-//     plantTrackerTitleLi.textContent="Plant";
-//     trackersNavList.appendChild(plantTrackerTitleLi);
-
-//     const plantTrackerUl = document.createElement("ul");
-//     trackersNavList.appendChild(plantTrackerUl);
-//     for(const plantTracker of plantTrackers){
-//         const plantTrackerLi = document.createElement("li");
-//         plantTrackerLi.setAttribute("trackerId", plantTracker.trackerPolicyId)
-//         plantTrackerLi.textContent=plantTracker.trackerPolicyName;
-//         plantTrackerUl.appendChild(plantTrackerLi);
-//     }
-// }
-
-// async function init(){
-//     const[gardensJson, trackerPoliciesJson] = await fetchInitialInfo();
-//     populateInitialInfo(gardensJson, trackerPoliciesJson);
-//     console.log("OBJECTS...");
-//     console.log("Gardens:", gardens);
-//     console.log("Tracker Policies:", trackerPolicies);
-
-//     populateNavBar(gardens, trackerPolicies);
-// }
-
-// init();
-
-// //--GARDEN CREATION--
-// async function createNewGarden(){
-//     console.log("Creating new garden");
-//     //TODO: Change to center window pop, rest of screen vignettes
-//     const newGardenName = prompt("New garden name:");
-//     console.log(newGardenName);
-
-//     try{
-//         const gardenResponse = await fetch("http://localhost:8080/api/gardens",{
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json"
-//             },
-//             body: JSON.stringify({
-//                 "gardenName":newGardenName
-//             })
-//         })
-
-//         if(!gardenResponse.ok){
-//             throw new Error(`Response status: ${gardenResponse.status}`)
-//         }
-
-//         const newGarden = await gardenResponse.json();
-
-//         gardens.push(new Garden(newGarden["gardenId"], newGardenName));
-//         console.log(gardens.at(-1));
-//         populateNavBar();
-//     }
-//     catch(error){
-//         console.error(error.message);
-//     }
-// }
-
-// //--TRACKER CREATION
-// async function createNewTracker(){
-//     console.log("Creating new tracker");
-
-//     const newTrackerName=prompt("New tracker name:");
-//     const newTrackerDescription=prompt("New tracker description");
-//     const newTrackerTargetType=prompt("New tracker target type (GARDEN GARDENZONE PLANT)");
-//     const newTrackerIntervalHours=prompt("New tracker interval (hours)");
-
-//     try{
-//         const trackerResponse = await fetch("http://localhost:8080/api/trackers",{
-//             method:"POST",
-//             headers:{
-//                 "Content-Type":"application/json"
-//             },
-//             body: JSON.stringify({
-//                 "trackerName":newTrackerName,
-//                 "trackerDescription":newTrackerDescription,
-//                 "targetType":newTrackerTargetType,
-//                 "intervalHours":newTrackerIntervalHours
-//             })
-//         })
-
-//         if(!trackerResponse.ok){
-//             throw new Error(`Response status: ${trackerResponse.status}`)
-//         }
-
-//         const newTracker = await trackerResponse.json();
-
-//         trackerPolicies.push(new TrackerPolicy(newTracker["trackerPolicyId"],
-//             newTrackerName,
-//             newTrackerDescription,
-//             newTrackerTargetType,
-//             newTrackerIntervalHours
-//         ));
-//         console.log(trackerPolicies.at(-1));
-//         populateNavBar();
-//     }
-//     catch(error){
-//         console.error(error.message);
-//     }
-// }
-
-// //--MAPPERS--
-// function gardenJsonToObject(gardenJson){
-//     return new Garden(
-//         gardenJson["gardenId"],
-//         gardenJson["gardenName"]
-//     );
-// }
-
-// function gardenZoneJsonToObject(gardenZoneJson){
-//     return new GardenZone(
-//         gardenZoneJson["gardenZoneId"],
-//         gardenZoneJson["gardenZoneName"]
-//     );
-// }
-
-// function plantJsonToObject(plantJson){
-//     return new Plant(
-//         plantJson["plantId"],
-//         plantJson["plantName"]
-//     );
-
-// }
-
-// function trackerPolicyJsonToObject(trackerPolicyJson){
-//     return new TrackerPolicy(
-//         trackerPolicyJson["trackerPolicyId"],
-//         trackerPolicyJson["name"],
-//         trackerPolicyJson["description"],
-//         trackerPolicyJson["targetType"],
-//         trackerPolicyJson["intervalHours"]
-//     );
-// }
-
-//Nav
-//Garden
-//Click: Garden name
-//Click: Zone name
-//Tracking
-//Click: Tracker policy
-
-//Create
-//Click: create garden
-//Click: create tracker
-
-//Main
-//GARDEN, GARDENZONE
-//Subentity list
-//Foreach subentity:
-//Click: view subentity
-//Click: delete subentity
-
-//Assigned tracker list
-//Foreach policy:
-//Click: view policy
-//Click: detach policy
-//Click: record event
-
-//Click: attach policy
-
-//PLANT
-//Assigned tracker list
-//Foreach policy:
-//Click: view policy
-//Click: detach policy
-//Click: record event
-
-//Click: attach policy
-
-//POLICY ENTITY
-//Assignment list
-//Foreach assignment:
-//Click: view assignment entity
-//Click: detach assignment
-
-//Click: attach assignment
-
-//Aside
-//ENTITY, POLICY
-//Click: edit entity/policy details
-//Click: delete entity/policy
+const trackerEventMapper = (e) =>
+  new TrackerEvent(e.trackerEventId, e.recordedTime, e.details);

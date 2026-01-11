@@ -148,19 +148,19 @@ Content-Type: application/json
 }
 
 ### Add a tracker assignment (invalid)
-POST http://localhost:8080/api/trackers/1/assignments
-Content-Type: application/json
-
-{
-    "trackableId":"8"
-}
-
-### Add another tracker assignment (invalid)
 POST http://localhost:8080/api/trackers/2/assignments
 Content-Type: application/json
 
 {
     "trackableId":"1"
+}
+
+### Add another tracker assignment (invalid)
+POST http://localhost:8080/api/trackers/3/assignments
+Content-Type: application/json
+
+{
+    "trackableId":"3"
 }
 
 ### Get all tracker assignments
@@ -174,7 +174,7 @@ DELETE http://localhost:8080/api/trackers/1/assignments/1
 
 ### --------------------------------------------------TRACKER EVENT OPERATIONS--------------------------------------------------
 ### Add a tracker event
-POST http://localhost:8080/api/trackers/1/assignments/1/events
+POST http://localhost:8080/api/trackers/2/assignments/1/events
 Content-Type: application/json
 
 {
@@ -201,4 +201,5 @@ GET http://localhost:8080/api/trackers/1/assignments/1/events/latest
 ### Delete a tracker event
 DELETE http://localhost:8080/api/trackers/1/assignments/1/events/1
 
-
+### Get hierarchy
+GET http://localhost:8080/api/trackers/trackables/6/hierarchy

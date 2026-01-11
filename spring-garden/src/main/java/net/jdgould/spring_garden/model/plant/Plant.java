@@ -34,4 +34,8 @@ public class Plant extends Trackable {
     public TrackableType getTrackableType() {
         return TrackableType.PLANT;
     }
+
+    public GardenZone getGardenZone() {
+        return gardenZone;
+    }
 }
